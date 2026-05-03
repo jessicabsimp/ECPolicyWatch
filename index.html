@@ -3,882 +3,156 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ECE Legislation Tracker</title>
+<title>ECPolicyWatch — Updates coming soon</title>
+<meta name="description" content="ECPolicyWatch is being refreshed. Updates coming soon.">
+<meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --sidebar-w: 280px;
   --color-fg: #f0f2f5;
   --color-bg: #0e1117;
   --color-surface: #161b22;
-  --color-surface2: #1c2333;
   --color-border: #2d3748;
   --color-accent: #6366f1;
   --color-accent-light: #818cf8;
-  --color-gold: #f59e0b;
-  --color-green: #34d399;
-  --color-red: #f87171;
   --color-text: #e2e8f0;
   --color-text-dim: #94a3b8;
   --color-text-muted: #64748b;
-  --radius: 12px;
-  --radius-sm: 8px;
 }
-* { margin:0; padding:0; box-sizing:border-box; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+  height: 100%;
+}
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   background: var(--color-bg);
   color: var(--color-text);
   line-height: 1.6;
-  min-height: 100vh;
-}
-.sidebar {
-  width: var(--sidebar-w);
-  background: var(--color-surface);
-  border-right: 1px solid var(--color-border);
-  position: fixed;
-  top: 0; left: 0; bottom: 0;
   display: flex;
   flex-direction: column;
-  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
 }
-.sidebar-header {
-  padding: 28px 24px 20px;
-  border-bottom: 1px solid var(--color-border);
+body::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 0%, rgba(99, 102, 241, 0.12), transparent 70%),
+    radial-gradient(ellipse 40% 40% at 50% 100%, rgba(129, 140, 248, 0.06), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
 }
-.sidebar-logo {
+.brand {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
+  margin-bottom: 56px;
+  position: relative;
+  z-index: 1;
 }
-.sidebar-logo svg { flex-shrink: 0; }
-.sidebar-logo-text {
+.brand-text {
   font-family: 'Playfair Display', serif;
   font-weight: 800;
-  font-size: 1.2rem;
+  font-size: 1.35rem;
   color: var(--color-fg);
   line-height: 1.2;
+  letter-spacing: -0.01em;
 }
-.sidebar-logo-text span {
+.brand-text span {
   display: block;
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   font-weight: 400;
   color: var(--color-text-dim);
   font-family: 'Inter', sans-serif;
-  letter-spacing: 0.5px;
-}
-.sidebar-nav {
-  padding: 16px 12px;
-  flex: 1;
-  overflow-y: auto;
-}
-.nav-section-title {
-  font-size: 0.6rem;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  color: var(--color-text-muted);
-  padding: 0 12px;
-  margin: 20px 0 8px;
-  font-weight: 600;
-}
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  border-radius: var(--radius-sm);
-  color: var(--color-text-dim);
-  text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  border: none;
-  background: none;
-  width: 100%;
-  text-align: left;
-}
-.nav-item:hover {
-  background: var(--color-surface2);
-  color: var(--color-fg);
-}
-.nav-item.active {
-  background: var(--color-accent);
-  color: #fff;
-}
-.nav-item svg {
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-  opacity: 0.7;
-}
-.nav-item.active svg { opacity: 1; }
-.nav-badge {
-  margin-left: auto;
-  background: var(--color-red);
-  color: #fff;
-  font-size: 0.65rem;
-  padding: 2px 8px;
-  border-radius: 10px;
-  font-weight: 600;
-}
-.main {
-  margin-left: var(--sidebar-w);
-  min-height: 100vh;
-}
-.topbar {
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
-  padding: 16px 36px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 50;
-}
-.topbar h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: var(--color-fg);
-}
-.topbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.search-box {
-  position: relative;
-}
-.search-box input {
-  background: var(--color-surface2);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  padding: 8px 14px 8px 36px;
-  color: var(--color-text);
-  font-size: 0.85rem;
-  width: 280px;
-  font-family: 'Inter', sans-serif;
-}
-.search-box input:focus {
-  outline: none;
-  border-color: var(--color-accent);
-}
-.search-box svg {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 16px;
-  height: 16px;
-  color: var(--color-text-muted);
-}
-.content {
-  padding: 32px 36px 48px;
-}
-.stats-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-  margin-bottom: 28px;
-}
-.stat-card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  padding: 20px 24px;
-}
-.stat-card .label {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--color-text-muted);
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-.stat-card .value {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--color-fg);
-}
-.stat-card .sub {
-  font-size: 0.8rem;
-  color: var(--color-text-dim);
+  letter-spacing: 0.6px;
   margin-top: 2px;
 }
-.stat-card.accent .value { color: var(--color-accent); }
-.stat-card.gold .value { color: var(--color-gold); }
-.stat-card.green .value { color: var(--color-green); }
-.filter-bar {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  padding: 16px 20px;
-  margin-bottom: 20px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  align-items: center;
-}
-.filter-bar label {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--color-text-muted);
-  font-weight: 600;
-}
-.filter-bar select,
-.filter-bar input {
-  background: var(--color-surface2);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  padding: 8px 12px;
-  color: var(--color-text);
-  font-size: 0.85rem;
-  font-family: 'Inter', sans-serif;
-}
-.filter-bar select:focus,
-.filter-bar input:focus {
-  outline: none;
-  border-color: var(--color-accent);
-}
-.filter-group {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.bills-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.bill-card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  padding: 20px 24px;
-  transition: all 0.15s ease;
-}
-.bill-card:hover {
-  border-color: var(--color-accent);
-  background: var(--color-surface2);
-}
-.bill-card-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 8px;
-}
-.bill-number {
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 500;
-  font-size: 0.85rem;
-  color: var(--color-accent-light);
-}
-.bill-origin {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--color-text-muted);
-  font-weight: 600;
-  background: var(--color-surface2);
-  padding: 3px 10px;
-  border-radius: 6px;
-}
-.bill-card h3 {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--color-fg);
-  line-height: 1.4;
-  margin-bottom: 8px;
-}
-.bill-status {
-  font-size: 0.8rem;
-  color: var(--color-text-dim);
-  margin-bottom: 8px;
-}
-.bill-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.bill-tags span {
-  font-size: 0.7rem;
-  padding: 2px 10px;
-  border-radius: 6px;
-  background: var(--color-surface2);
-  color: var(--color-text-dim);
-  border: 1px solid var(--color-border);
-}
-.bill-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  margin-top: 10px;
-  font-size: 0.8rem;
-  color: var(--color-accent-light);
-  text-decoration: none;
-}
-.bill-link:hover { text-decoration: underline; }
-.bill-link svg { width: 14px; height: 14px; }
-.news-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: 16px;
-}
-.news-card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  padding: 20px 24px;
-}
-.news-card h4 {
-  font-size: 0.95rem;
-  font-weight: 600;
-  margin-bottom: 8px;
-}
-.news-card h4 a {
-  color: var(--color-fg);
-  text-decoration: none;
-}
-.news-card h4 a:hover {
-  color: var(--color-accent-light);
-}
-.news-meta {
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
-  margin-bottom: 8px;
-}
-.news-desc {
-  font-size: 0.85rem;
-  color: var(--color-text-dim);
-  line-height: 1.5;
-}
-.section { display: none; }
-.section.active { display: block; }
-.loading {
+.content {
+  max-width: 620px;
   text-align: center;
-  padding: 60px 20px;
+  position: relative;
+  z-index: 1;
+}
+.eyebrow {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-accent-light);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  border-radius: 999px;
+  margin-bottom: 28px;
+}
+h1 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 800;
+  font-size: clamp(2.25rem, 6vw, 3.75rem);
+  line-height: 1.1;
+  color: var(--color-fg);
+  margin-bottom: 24px;
+  letter-spacing: -0.02em;
+}
+h1 .em-dash {
+  color: var(--color-accent);
+}
+.subtitle {
+  font-size: 1.05rem;
   color: var(--color-text-dim);
+  max-width: 480px;
+  margin: 0 auto;
+  line-height: 1.65;
 }
-.loading .spinner {
-  width: 32px;
-  height: 32px;
-  border: 3px solid var(--color-border);
-  border-top-color: var(--color-accent);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  margin: 0 auto 16px;
+footer {
+  position: absolute;
+  bottom: 24px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  z-index: 1;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
-.bill-count {
-  font-size: 0.8rem;
-  color: var(--color-text-dim);
-  margin-bottom: 16px;
+@media (max-width: 540px) {
+  .brand { margin-bottom: 40px; }
+  .brand-text { font-size: 1.15rem; }
+  .eyebrow { margin-bottom: 20px; }
+  h1 { margin-bottom: 18px; }
+  .subtitle { font-size: 0.98rem; }
 }
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  margin-top: 24px;
-}
-.pagination button {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  padding: 8px 14px;
-  color: var(--color-text);
-  font-size: 0.8rem;
-  cursor: pointer;
-  font-family: 'Inter', sans-serif;
-}
-.pagination button:hover {
-  border-color: var(--color-accent);
-}
-.pagination button:disabled {
-  opacity: 0.3;
-  cursor: default;
-}
-.pagination .page-info {
-  font-size: 0.8rem;
-  color: var(--color-text-dim);
-  padding: 0 8px;
-}
-@media (max-width: 900px) {
-  .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; }
-  .sidebar.open { transform: translateX(0); }
-  .main { margin-left: 0; }
-  .content { padding: 16px; }
-  .stats-row { grid-template-columns: repeat(2, 1fr); }
-  .search-box input { width: 160px; }
-  .news-grid { grid-template-columns: 1fr; }
-}
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
 </style>
 </head>
 <body>
 
-<aside class="sidebar">
-  <div class="sidebar-header">
-    <div class="sidebar-logo">
-      <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-        <rect width="40" height="40" rx="10" fill="#6366f1"/>
-        <text x="8" y="27" font-family="Playfair Display,serif" font-weight="800" font-size="22" fill="#fff">E</text>
-      </svg>
-      <div class="sidebar-logo-text">
-        ECE Policy Watch
-        <span>Legislation Tracker</span>
-      </div>
-    </div>
+<div class="brand">
+  <svg width="44" height="44" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+    <rect width="40" height="40" rx="10" fill="#6366f1"/>
+    <text x="8" y="27" font-family="Playfair Display,serif" font-weight="800" font-size="22" fill="#fff">E</text>
+  </svg>
+  <div class="brand-text">
+    ECE Policy Watch
+    <span>Legislation Tracker</span>
   </div>
-  <nav class="sidebar-nav">
-    <div class="nav-section-title">Overview</div>
-    <button class="nav-item active" data-section="dashboard">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-      Dashboard
-    </button>
-    <div class="nav-section-title">Browse</div>
-    <button class="nav-item" data-section="all">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-      All Legislation
-      <span class="nav-badge" id="badge-all">2027</span>
-    </button>
-    <button class="nav-item" data-section="tn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-      Tennessee
-      <span class="nav-badge" id="badge-tn">730</span>
-    </button>
-    <button class="nav-item" data-section="federal">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21V13h6v8"/></svg>
-      Federal
-      <span class="nav-badge" id="badge-fed">1297</span>
-    </button>
-    <div class="nav-section-title">Updates</div>
-    <button class="nav-item" data-section="news">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2"/></svg>
-      ECE News
-    </button>
-  </nav>
-</aside>
+</div>
 
-<main class="main">
-  <header class="topbar">
-    <h1 id="page-title">Dashboard</h1>
-    <div class="topbar-actions">
-      <div class="search-box">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-        <input type="text" id="search-input" placeholder="Search bills..." oninput="handleSearch(this.value)">
-      </div>
-    </div>
-  </header>
-  <div class="content">
-    <div class="section active" id="sec-dashboard">
-      <div class="stats-row">
-        <div class="stat-card accent">
-          <div class="label">Total Bills</div>
-          <div class="value">2027</div>
-          <div class="sub">ECE-related legislation</div>
-        </div>
-        <div class="stat-card gold">
-          <div class="label">Tennessee</div>
-          <div class="value">730</div>
-          <div class="sub">729 currently active</div>
-        </div>
-        <div class="stat-card green">
-          <div class="label">Federal</div>
-          <div class="value">1297</div>
-          <div class="sub">1296 currently active</div>
-        </div>
-        <div class="stat-card">
-          <div class="label">Tagged Topics</div>
-          <div class="value">30</div>
-          <div class="sub">unique categories</div>
-        </div>
-      </div>
-      <div class="news-grid" id="dashboard-news">
-
-            <div class="news-card">
-                <h4><a href="https://tennesseelookout.com/2026/04/08/will-tn-voucher-program-expand-by-15000-or-20000-seats-house-and-senate-are-at-odds-on-details/" target="_blank">Will TN voucher program expand by 15,000 or 20,000 seats? House and Senate are at odds on details.</a></h4>
-                <p class="news-meta">Tennessee Lookout &bull; </p>
-                <p class="news-desc"></p>
-            </div>
-
-            <div class="news-card">
-                <h4><a href="https://www.the74million.org/zero2eight/when-work-isnt-9-to-5-child-care-cant-be-either/" target="_blank">Opinion: When Work Isn\u2019t 9-to-5, Child Care Can\u2019t Be Either</a></h4>
-                <p class="news-meta">The 74 Million &bull; </p>
-                <p class="news-desc"></p>
-            </div>
-
-            <div class="news-card">
-                <h4><a href="https://tennesseelookout.com/2026/04/08/tennessee-lawmakers-approve-state-disaster-fund-to-help-fill-federal-aid-gaps/" target="_blank">Tennessee lawmakers approve state disaster fund to help fill federal aid gaps</a></h4>
-                <p class="news-meta">Tennessee Lookout &bull; </p>
-                <p class="news-desc"></p>
-            </div>
-
-            <div class="news-card">
-                <h4><a href="https://tennesseelookout.com/2026/04/07/tennessee-legislature-passes-bill-setting-new-rules-for-failing-wastewater-systems/" target="_blank">Tennessee legislature passes bill setting new rules for failing wastewater systems</a></h4>
-                <p class="news-meta">Tennessee Lookout &bull; </p>
-                <p class="news-desc"></p>
-            </div>
-
-            <div class="news-card">
-                <h4><a href="https://tennesseelookout.com/2026/04/07/bill-requiring-citizenship-database-checks-for-voter-registration-heads-to-governors-desk/" target="_blank">Bill requiring citizenship database checks for voter registration heads to governor\u2019s desk</a></h4>
-                <p class="news-meta">Tennessee Lookout &bull; </p>
-                <p class="news-desc"></p>
-            </div>
-
-            <div class="news-card">
-                <h4><a href="https://tennesseelookout.com/2026/04/07/tennessee-senate-adopts-new-state-immigration-crimes/" target="_blank">Tennessee Senate adopts new state immigration crimes</a></h4>
-                <p class="news-meta">Tennessee Lookout &bull; </p>
-                <p class="news-desc"></p>
-            </div>
-      </div>
-    </div>
-
-    <div class="section" id="sec-all">
-      <div class="filter-bar" id="filter-bar-all">
-        <div class="filter-group">
-          <label>Origin</label>
-          <select id="filter-origin-all" onchange="applyFilters()">
-            <option value="all">All</option>
-            <option value="TN">Tennessee</option>
-            <option value="Federal">Federal</option>
-          </select>
-        </div>
-        <div class="filter-group">
-          <label>Status</label>
-          <select id="filter-status-all" onchange="applyFilters()">
-            <option value="all">All</option>
-          </select>
-        </div>
-        <div class="filter-group">
-          <label>Topic</label>
-          <select id="filter-topic-all" onchange="applyFilters()">
-            <option value="all">All</option>
-          </select>
-        </div>
-      </div>
-      <div class="bill-count" id="bill-count-all"></div>
-      <div class="bills-grid" id="bills-all">
-        <div class="loading"><div class="spinner"></div><p>Loading legislation data...</p></div>
-      </div>
-      <div class="pagination" id="pagination-all"></div>
-    </div>
-
-    <div class="section" id="sec-tn">
-      <div class="filter-bar">
-        <div class="filter-group">
-          <label>Status</label>
-          <select id="filter-status-tn" onchange="applyFilters()">
-            <option value="all">All</option>
-          </select>
-        </div>
-        <div class="filter-group">
-          <label>Topic</label>
-          <select id="filter-topic-tn" onchange="applyFilters()">
-            <option value="all">All</option>
-          </select>
-        </div>
-      </div>
-      <div class="bill-count" id="bill-count-tn"></div>
-      <div class="bills-grid" id="bills-tn">
-        <div class="loading"><div class="spinner"></div><p>Loading Tennessee bills...</p></div>
-      </div>
-      <div class="pagination" id="pagination-tn"></div>
-    </div>
-
-    <div class="section" id="sec-federal">
-      <div class="filter-bar">
-        <div class="filter-group">
-          <label>Status</label>
-          <select id="filter-status-fed" onchange="applyFilters()">
-            <option value="all">All</option>
-          </select>
-        </div>
-        <div class="filter-group">
-          <label>Topic</label>
-          <select id="filter-topic-fed" onchange="applyFilters()">
-            <option value="all">All</option>
-          </select>
-        </div>
-      </div>
-      <div class="bill-count" id="bill-count-fed"></div>
-      <div class="bills-grid" id="bills-fed">
-        <div class="loading"><div class="spinner"></div><p>Loading federal bills...</p></div>
-      </div>
-      <div class="pagination" id="pagination-fed"></div>
-    </div>
-
-    <div class="section" id="sec-news">
-      <div class="news-grid">
-
-            <div class="news-card">
-                <h4><a href="https://tennesseelookout.com/2026/04/08/will-tn-voucher-program-expand-by-15000-or-20000-seats-house-and-senate-are-at-odds-on-details/" target="_blank">Will TN voucher program expand by 15,000 or 20,000 seats? House and Senate are at odds on details.</a></h4>
-                <p class="news-meta">Tennessee Lookout &bull; </p>
-                <p class="news-desc"></p>
-            </div>
-
-            <div class="news-card">
-                <h4><a href="https://www.the74million.org/zero2eight/when-work-isnt-9-to-5-child-care-cant-be-either/" target="_blank">Opinion: When Work Isn\u2019t 9-to-5, Child Care Can\u2019t Be Either</a></h4>
-                <p class="news-meta">The 74 Million &bull; </p>
-                <p class="news-desc"></p>
-            </div>
-
-            <div class="news-card">
-                <h4><a href="https://tennesseelookout.com/2026/04/08/tennessee-lawmakers-approve-state-disaster-fund-to-help-fill-federal-aid-gaps/" target="_blank">Tennessee lawmakers approve state disaster fund to help fill federal aid gaps</a></h4>
-                <p class="news-meta">Tennessee Lookout &bull; </p>
-                <p class="news-desc"></p>
-            </div>
-
-            <div class="news-card">
-                <h4><a href="https://tennesseelookout.com/2026/04/07/tennessee-legislature-passes-bill-setting-new-rules-for-failing-wastewater-systems/" target="_blank">Tennessee legislature passes bill setting new rules for failing wastewater systems</a></h4>
-                <p class="news-meta">Tennessee Lookout &bull; </p>
-                <p class="news-desc"></p>
-            </div>
-
-            <div class="news-card">
-                <h4><a href="https://tennesseelookout.com/2026/04/07/bill-requiring-citizenship-database-checks-for-voter-registration-heads-to-governors-desk/" target="_blank">Bill requiring citizenship database checks for voter registration heads to governor\u2019s desk</a></h4>
-                <p class="news-meta">Tennessee Lookout &bull; </p>
-                <p class="news-desc"></p>
-            </div>
-
-            <div class="news-card">
-                <h4><a href="https://tennesseelookout.com/2026/04/07/tennessee-senate-adopts-new-state-immigration-crimes/" target="_blank">Tennessee Senate adopts new state immigration crimes</a></h4>
-                <p class="news-meta">Tennessee Lookout &bull; </p>
-                <p class="news-desc"></p>
-            </div>
-      </div>
-    </div>
-  </div>
+<main class="content">
+  <span class="eyebrow">In progress</span>
+  <h1>ECPolicyWatch <span class="em-dash">—</span> Updates coming soon</h1>
+  <p class="subtitle">We're refreshing the tracker. Check back shortly for updated Tennessee and federal early childhood legislation coverage.</p>
 </main>
 
-<script>
-var PAGE_SIZE = 30;
-var allBills = [];
-var sessions = [];
-var statusNames = [];
+<footer>
+  &copy; <script>document.write(new Date().getFullYear())</script> ECE Policy Watch
+</footer>
 
-var state = {
-  all: { filtered: [], page: 1 },
-  tn: { filtered: [], page: 1 },
-  fed: { filtered: [], page: 1 }
-};
-
-function escHtml(s) {
-  if (!s) return '';
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-async function init() {
-  try {
-    var data = await fetch('data/bills.json').then(function(r) { return r.json(); });
-    sessions = data.s;
-    statusNames = data.st;
-    
-    allBills = data.b.map(function(b) {
-      return {
-        id: b[0],
-        session: sessions[b[1]],
-        number: b[2],
-        title: b[3],
-        tags: b[4],
-        status: statusNames[b[5]],
-        url: b[6]
-      };
-    });
-    
-    populateFilters();
-    filterAll();
-    filterSection('tn');
-    filterSection('fed');
-    updatePageTitle();
-  } catch (err) {
-    console.error('Failed to load data:', err);
-    document.querySelectorAll('.bills-grid').forEach(function(el) {
-      el.innerHTML = '<p style="text-align:center;color:var(--color-text-dim);padding:40px">Failed to load data. Try refreshing.</p>';
-    });
-  }
-}
-
-function populateFilters() {
-  var tnStatuses = Array.from(new Set(allBills.filter(function(b) { return b.id === 'TN'; }).map(function(b) { return b.status; }))).sort();
-  var fedStatuses = Array.from(new Set(allBills.filter(function(b) { return b.id === 'Federal'; }).map(function(b) { return b.status; }))).sort();
-  var allStatuses = Array.from(new Set(allBills.map(function(b) { return b.status; }))).sort();
-  
-  [{id:'status-all', list:allStatuses},{id:'status-tn', list:tnStatuses},{id:'status-fed', list:fedStatuses}].forEach(function(item) {
-    var sel = document.getElementById('filter-' + item.id);
-    if (!sel) return;
-    item.list.forEach(function(s) {
-      if (!s) return;
-      var opt = document.createElement('option');
-      opt.value = s;
-      opt.textContent = s.length > 60 ? s.substring(0,60) + '...' : s;
-      sel.appendChild(opt);
-    });
-  });
-  
-  var tnTopics = Array.from(new Set(allBills.filter(function(b) { return b.id === 'TN'; }).flatMap(function(b) { return b.tags; }))).sort();
-  var fedTopics = Array.from(new Set(allBills.filter(function(b) { return b.id === 'Federal'; }).flatMap(function(b) { return b.tags; }))).sort();
-  var allTopics = Array.from(new Set(allBills.flatMap(function(b) { return b.tags; }))).sort();
-  
-  [{id:'topic-all', list:allTopics},{id:'topic-tn', list:tnTopics},{id:'topic-fed', list:fedTopics}].forEach(function(item) {
-    var sel = document.getElementById('filter-' + item.id);
-    if (!sel) return;
-    item.list.forEach(function(t) {
-      var opt = document.createElement('option');
-      opt.value = t;
-      opt.textContent = t;
-      sel.appendChild(opt);
-    });
-  });
-}
-
-function filterAll() {
-  var bills = allBills.slice();
-  var origin = document.getElementById('filter-origin-all');
-  var status = document.getElementById('filter-status-all');
-  var topic = document.getElementById('filter-topic-all');
-  var searchInput = document.getElementById('search-input');
-  
-  if (origin && origin.value && origin.value !== 'all') bills = bills.filter(function(b) { return b.id === origin.value; });
-  if (status && status.value && status.value !== 'all') bills = bills.filter(function(b) { return b.status === status.value; });
-  if (topic && topic.value && topic.value !== 'all') bills = bills.filter(function(b) { return b.tags && b.tags.indexOf(topic.value) >= 0; });
-  
-  var search = searchInput ? searchInput.value.toLowerCase() : '';
-  if (search) bills = bills.filter(function(b) {
-    return (b.title || '').toLowerCase().indexOf(search) >= 0 ||
-           (b.number || '').toLowerCase().indexOf(search) >= 0 ||
-           (b.tags || []).some(function(t) { return t.toLowerCase().indexOf(search) >= 0; });
-  });
-  
-  state.all.filtered = bills;
-  state.all.page = 1;
-  renderBills('all');
-}
-
-function filterSection(section) {
-  var origin = section === 'tn' ? 'TN' : 'Federal';
-  var prefix = section;
-  var bills = allBills.filter(function(b) { return b.id === origin; });
-  
-  var status = document.getElementById('filter-status-' + prefix);
-  var topic = document.getElementById('filter-topic-' + prefix);
-  var searchInput = document.getElementById('search-input');
-  
-  if (status && status.value && status.value !== 'all') bills = bills.filter(function(b) { return b.status === status.value; });
-  if (topic && topic.value && topic.value !== 'all') bills = bills.filter(function(b) { return b.tags && b.tags.indexOf(topic.value) >= 0; });
-  
-  var search = searchInput ? searchInput.value.toLowerCase() : '';
-  if (search) bills = bills.filter(function(b) {
-    return (b.title || '').toLowerCase().indexOf(search) >= 0 ||
-           (b.number || '').toLowerCase().indexOf(search) >= 0 ||
-           (b.tags || []).some(function(t) { return t.toLowerCase().indexOf(search) >= 0; });
-  });
-  
-  state[section].filtered = bills;
-  state[section].page = 1;
-  renderBills(section);
-}
-
-function renderBills(section) {
-  var container = document.getElementById('bills-' + section);
-  var countEl = document.getElementById('bill-count-' + section);
-  var pagEl = document.getElementById('pagination-' + section);
-  var s = state[section];
-  
-  countEl.textContent = s.filtered.length + ' bills found';
-  
-  var start = (s.page - 1) * PAGE_SIZE;
-  var page = s.filtered.slice(start, start + PAGE_SIZE);
-  
-  if (page.length === 0) {
-    container.innerHTML = '<p style="text-align:center;color:var(--color-text-dim);padding:40px">No bills match your filters.</p>';
-    pagEl.innerHTML = '';
-    return;
-  }
-  
-  var html = '';
-  for (var i = 0; i < page.length; i++) {
-    var b = page[i];
-    html += '<div class="bill-card">';
-    html += '  <div class="bill-card-header">';
-    html += '    <span class="bill-number">' + (b.number || '&mdash;') + '</span>';
-    html += '    <span class="bill-origin">' + b.id + '</span>';
-    html += '  </div>';
-    html += '  <h3>' + escHtml(b.title) + '</h3>';
-    html += '  <p class="bill-status">' + escHtml(b.status) + '</p>';
-    html += '  <div class="bill-tags">';
-    if (b.tags && b.tags.length) {
-      for (var j = 0; j < b.tags.length; j++) {
-        html += '<span>' + escHtml(b.tags[j]) + '</span>';
-      }
-    }
-    html += '  </div>';
-    if (b.url && b.url !== '#') {
-      html += '<a class="bill-link" href="' + b.url + '" target="_blank" onclick="event.stopPropagation()">View details' + ' <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>';
-    }
-    html += '</div>';
-  }
-  container.innerHTML = html;
-  
-  var totalPages = Math.ceil(s.filtered.length / PAGE_SIZE);
-  if (totalPages <= 1) { pagEl.innerHTML = ''; return; }
-  pagEl.innerHTML = 
-    '<button ' + (s.page <= 1 ? 'disabled' : '') + ' onclick="goPage(' + "'" + section + "'" + ', ' + (s.page - 1) + ')">&larr; Prev</button>' +
-    '  <span class="page-info">Page ' + s.page + ' of ' + totalPages + '</span>' +
-    '  <button ' + (s.page >= totalPages ? 'disabled' : '') + ' onclick="goPage(' + "'" + section + "'" + ', ' + (s.page + 1) + ')">Next &rarr;</button>';
-}
-
-function goPage(section, page) {
-  state[section].page = page;
-  renderBills(section);
-  var el = document.getElementById('bills-' + section);
-  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-function handleSearch(val) {
-  filterAll();
-  filterSection('tn');
-  filterSection('fed');
-}
-
-function applyFilters() {
-  filterAll();
-  filterSection('tn');
-  filterSection('fed');
-}
-
-function updatePageTitle() {
-  var titles = {
-    'dashboard': 'Dashboard',
-    'all': 'All Legislation',
-    'tn': 'Tennessee Bills',
-    'federal': 'Federal Bills',
-    'news': 'ECE News'
-  };
-  
-  document.querySelectorAll('.nav-item').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      var sec = this.getAttribute('data-section');
-      document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
-      this.classList.add('active');
-      document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
-      var els = document.getElementById('sec-' + sec);
-      if (els) els.classList.add('active');
-      var titleEl = document.getElementById('page-title');
-      if (titleEl) titleEl.textContent = titles[sec] || sec;
-    });
-  });
-}
-
-init();
-</script>
 </body>
 </html>
