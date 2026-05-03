@@ -4,154 +4,291 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ECPolicyWatch — Updates coming soon</title>
-<meta name="description" content="ECPolicyWatch is being refreshed. Updates coming soon.">
+<meta name="description" content="ECPolicyWatch — Watching Policies. Protecting Childhood. The tracker is being refreshed. Updates coming soon.">
 <meta name="robots" content="noindex">
+
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16.png">
+<link rel="shortcut icon" href="/assets/favicon.ico">
+
+<meta name="theme-color" content="#09395e">
+<meta property="og:title" content="ECPolicyWatch — Updates coming soon">
+<meta property="og:description" content="Watching Policies. Protecting Childhood. Updates coming soon.">
+<meta property="og:image" content="/assets/logo.png">
+<meta property="og:type" content="website">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:wght@600;700&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+
 <style>
 :root {
-  --color-fg: #f0f2f5;
-  --color-bg: #0e1117;
-  --color-surface: #161b22;
-  --color-border: #2d3748;
-  --color-accent: #6366f1;
-  --color-accent-light: #818cf8;
-  --color-text: #e2e8f0;
-  --color-text-dim: #94a3b8;
-  --color-text-muted: #64748b;
+  --navy: #09395e;
+  --navy-deep: #062a47;
+  --navy-soft: #1a4d75;
+  --red: #c53030;
+  --red-deep: #a02525;
+  --cream: #fdf9f3;
+  --cream-warm: #f7f0e3;
+  --paper: #ffffff;
+  --text: #0d2942;
+  --text-dim: #4a6b8a;
+  --text-muted: #88a0b8;
+  --border: rgba(9, 57, 94, 0.12);
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html, body {
-  height: 100%;
-}
+html, body { height: 100%; }
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: var(--color-bg);
-  color: var(--color-text);
+  background: var(--cream);
+  color: var(--text);
   line-height: 1.6;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 32px 24px;
+  padding: 48px 24px 96px;
   min-height: 100vh;
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 body::before {
   content: '';
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 60% 50% at 50% 0%, rgba(99, 102, 241, 0.12), transparent 70%),
-    radial-gradient(ellipse 40% 40% at 50% 100%, rgba(129, 140, 248, 0.06), transparent 70%);
+    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(9, 57, 94, 0.06), transparent 65%),
+    radial-gradient(ellipse 50% 40% at 50% 100%, rgba(197, 48, 48, 0.04), transparent 70%);
   pointer-events: none;
   z-index: 0;
 }
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 56px;
+
+.logo-wrap {
   position: relative;
   z-index: 1;
+  margin-bottom: 36px;
+  animation: fadeInDown 0.8s ease-out;
 }
-.brand-text {
-  font-family: 'Playfair Display', serif;
-  font-weight: 800;
-  font-size: 1.35rem;
-  color: var(--color-fg);
-  line-height: 1.2;
-  letter-spacing: -0.01em;
-}
-.brand-text span {
+.logo-wrap img {
   display: block;
-  font-size: 0.72rem;
-  font-weight: 400;
-  color: var(--color-text-dim);
-  font-family: 'Inter', sans-serif;
-  letter-spacing: 0.6px;
-  margin-top: 2px;
+  width: 160px;
+  height: 160px;
+  filter: drop-shadow(0 12px 32px rgba(9, 57, 94, 0.18));
 }
+
 .content {
-  max-width: 620px;
+  max-width: 680px;
   text-align: center;
   position: relative;
   z-index: 1;
+  animation: fadeInUp 0.8s ease-out 0.15s both;
 }
+
 .eyebrow {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Inter', sans-serif;
   font-size: 0.72rem;
   font-weight: 600;
-  color: var(--color-accent-light);
-  letter-spacing: 2px;
+  color: var(--red);
+  letter-spacing: 2.5px;
   text-transform: uppercase;
-  padding: 6px 14px;
-  background: rgba(99, 102, 241, 0.1);
-  border: 1px solid rgba(99, 102, 241, 0.25);
+  padding: 8px 16px;
+  background: rgba(197, 48, 48, 0.08);
+  border: 1px solid rgba(197, 48, 48, 0.2);
   border-radius: 999px;
-  margin-bottom: 28px;
+  margin-bottom: 32px;
 }
+.eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--red);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.2); }
+}
+
 h1 {
-  font-family: 'Playfair Display', serif;
-  font-weight: 800;
-  font-size: clamp(2.25rem, 6vw, 3.75rem);
-  line-height: 1.1;
-  color: var(--color-fg);
-  margin-bottom: 24px;
+  font-family: 'Lora', Georgia, serif;
+  font-weight: 700;
+  font-size: clamp(2.5rem, 6.5vw, 4rem);
+  line-height: 1.05;
+  color: var(--navy);
+  margin-bottom: 18px;
   letter-spacing: -0.02em;
 }
 h1 .em-dash {
-  color: var(--color-accent);
+  color: var(--red);
+  font-weight: 700;
+  margin: 0 0.05em;
 }
+h1 .secondary {
+  display: block;
+  font-style: italic;
+  font-weight: 600;
+  color: var(--navy-soft);
+  font-size: 0.85em;
+  margin-top: 4px;
+}
+
+.tagline {
+  font-family: 'Nunito', 'Inter', sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.05rem, 2.4vw, 1.35rem);
+  letter-spacing: -0.005em;
+  margin: 28px 0 24px;
+  color: var(--navy);
+}
+.tagline .accent {
+  color: var(--red);
+}
+.tagline .sep {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  margin: 0 14px;
+  vertical-align: middle;
+  position: relative;
+  top: -3px;
+}
+
 .subtitle {
-  font-size: 1.05rem;
-  color: var(--color-text-dim);
-  max-width: 480px;
+  font-size: 1.02rem;
+  color: var(--text-dim);
+  max-width: 520px;
   margin: 0 auto;
   line-height: 1.65;
 }
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 36px auto 28px;
+  max-width: 200px;
+}
+.divider .line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.divider .star {
+  color: var(--red);
+  font-size: 0.9rem;
+}
+
+.brand-mark {
+  font-family: 'Lora', serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--navy);
+  letter-spacing: 1.2px;
+}
+.brand-mark .dot {
+  color: var(--red);
+}
+
 footer {
   position: absolute;
-  bottom: 24px;
+  bottom: 28px;
   left: 0;
   right: 0;
   text-align: center;
   font-size: 0.78rem;
-  color: var(--color-text-muted);
+  color: var(--text-muted);
   z-index: 1;
 }
+footer a {
+  color: var(--navy-soft);
+  text-decoration: none;
+  font-weight: 500;
+}
+footer a:hover { color: var(--red); }
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 @media (max-width: 540px) {
-  .brand { margin-bottom: 40px; }
-  .brand-text { font-size: 1.15rem; }
-  .eyebrow { margin-bottom: 20px; }
-  h1 { margin-bottom: 18px; }
-  .subtitle { font-size: 0.98rem; }
+  body { padding: 32px 20px 80px; }
+  .logo-wrap { margin-bottom: 24px; }
+  .logo-wrap img { width: 120px; height: 120px; }
+  .eyebrow { margin-bottom: 24px; font-size: 0.68rem; padding: 6px 14px; }
+  h1 { margin-bottom: 14px; }
+  .tagline { margin: 22px 0 20px; }
+  .tagline .sep { margin: 0 10px; }
+  .subtitle { font-size: 0.96rem; }
+  .divider { margin: 28px auto 20px; }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --cream: #0a1929;
+    --cream-warm: #0f2236;
+    --paper: #122a44;
+    --text: #e6edf5;
+    --text-dim: #95acc4;
+    --text-muted: #6b85a3;
+    --border: rgba(255, 255, 255, 0.08);
+  }
+  h1 { color: #e6edf5; }
+  h1 .secondary { color: #b8cce0; }
+  .tagline { color: #e6edf5; }
+  .brand-mark { color: #e6edf5; }
+  body::before {
+    background:
+      radial-gradient(ellipse 70% 50% at 50% 0%, rgba(9, 57, 94, 0.4), transparent 65%),
+      radial-gradient(ellipse 50% 40% at 50% 100%, rgba(197, 48, 48, 0.1), transparent 70%);
+  }
 }
 </style>
 </head>
 <body>
 
-<div class="brand">
-  <svg width="44" height="44" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-    <rect width="40" height="40" rx="10" fill="#6366f1"/>
-    <text x="8" y="27" font-family="Playfair Display,serif" font-weight="800" font-size="22" fill="#fff">E</text>
-  </svg>
-  <div class="brand-text">
-    ECE Policy Watch
-    <span>Legislation Tracker</span>
-  </div>
+<div class="logo-wrap">
+  <img src="/assets/logo.png" alt="ECPolicyWatch logo: U.S. Capitol dome with children silhouettes" width="160" height="160">
 </div>
 
 <main class="content">
   <span class="eyebrow">In progress</span>
-  <h1>ECPolicyWatch <span class="em-dash">—</span> Updates coming soon</h1>
-  <p class="subtitle">We're refreshing the tracker. Check back shortly for updated Tennessee and federal early childhood legislation coverage.</p>
+
+  <h1>
+    ECPolicyWatch <span class="em-dash">—</span><br>
+    <span class="secondary">Updates coming soon</span>
+  </h1>
+
+  <p class="tagline">
+    Watching <span class="accent">Policies</span><span class="sep"></span><span class="accent">Protecting</span> Childhood
+  </p>
+
+  <p class="subtitle">
+    We're refreshing the tracker. Check back shortly for updated Tennessee and federal early childhood legislation coverage.
+  </p>
+
+  <div class="divider">
+    <span class="line"></span>
+    <span class="star">★</span>
+    <span class="line"></span>
+  </div>
+
+  <p class="brand-mark">ecpolicywatch<span class="dot">.</span>com</p>
 </main>
 
 <footer>
-  &copy; <script>document.write(new Date().getFullYear())</script> ECE Policy Watch
+  &copy; <script>document.write(new Date().getFullYear())</script> ECPolicyWatch. All rights reserved.
 </footer>
 
 </body>
