@@ -1,0 +1,45 @@
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+.pytest_cache/
+
+# Node (in case we ever add a build step)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Cloudflare Wrangler
+.wrangler/
+.dev.vars
+
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+
+# Build artifacts / archives
+*.zip
+*.tar.gz
+*.tgz
+dist/
+build/
+out/
+
+# Backups & temporary data
+*.bak
+*.tmp
+data/backups/
+data/*.tmp
