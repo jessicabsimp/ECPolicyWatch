@@ -3,292 +3,844 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ECPolicyWatch — Updates coming soon</title>
-<meta name="description" content="ECPolicyWatch — Watching Policies. Protecting Childhood. The tracker is being refreshed. Updates coming soon.">
+<title>ECPolicyWatch — Watching Policies. Protecting Childhood.</title>
+<meta name="description" content="Tracking Tennessee and federal legislation on early childhood, child hunger, and parental support. Find bills, contact legislators, take action.">
 <meta name="robots" content="noindex">
-
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16.png">
 <link rel="shortcut icon" href="/assets/favicon.ico">
-
 <meta name="theme-color" content="#09395e">
-<meta property="og:title" content="ECPolicyWatch — Updates coming soon">
-<meta property="og:description" content="Watching Policies. Protecting Childhood. Updates coming soon.">
+<meta property="og:title" content="ECPolicyWatch — Watching Policies. Protecting Childhood.">
+<meta property="og:description" content="A non-partisan tracker for early childhood, child hunger, and parental support legislation in Tennessee.">
 <meta property="og:image" content="/assets/logo.png">
 <meta property="og:type" content="website">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:wght@600;700&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@500;600;700&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
 
 <style>
 :root {
-  --navy: #09395e;
-  --navy-deep: #062a47;
-  --navy-soft: #1a4d75;
-  --red: #c53030;
-  --red-deep: #a02525;
-  --cream: #fdf9f3;
-  --cream-warm: #f7f0e3;
-  --paper: #ffffff;
-  --text: #0d2942;
-  --text-dim: #4a6b8a;
-  --text-muted: #88a0b8;
-  --border: rgba(9, 57, 94, 0.12);
+  --navy:#09395e; --navy-deep:#062a47; --navy-soft:#1a4d75;
+  --red:#c53030; --red-deep:#a02525; --red-soft:#e8d5d5;
+  --cream:#fdf9f3; --cream-warm:#f7f0e3; --paper:#ffffff;
+  --text:#0d2942; --text-dim:#4a6b8a; --text-muted:#88a0b8;
+  --border:rgba(9,57,94,0.12); --border-soft:rgba(9,57,94,0.06);
+  --green:#2d6a4f; --amber:#b07024;
 }
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { height: 100%; }
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: var(--cream);
-  color: var(--text);
-  line-height: 1.6;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 48px 24px 96px;
-  min-height: 100vh;
-  position: relative;
-  overflow-x: hidden;
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  background:var(--cream);
+  color:var(--text);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
 }
-body::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(9, 57, 94, 0.06), transparent 65%),
-    radial-gradient(ellipse 50% 40% at 50% 100%, rgba(197, 48, 48, 0.04), transparent 70%);
-  pointer-events: none;
-  z-index: 0;
+img { max-width:100%; display:block; }
+a { color:var(--navy); text-decoration:none; transition:color 0.2s; }
+a:hover { color:var(--red); }
+
+/* ── NAV ─────────────────────────────────────────────── */
+nav.site-nav {
+  background:var(--paper);
+  border-bottom:1px solid var(--border);
+  position:sticky; top:0; z-index:50;
+  backdrop-filter:blur(8px);
+  background:rgba(255,255,255,0.94);
+}
+.nav-inner {
+  max-width:1200px; margin:0 auto;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 28px; gap:32px;
+}
+.brand {
+  display:flex; align-items:center; gap:12px;
+  font-family:'Lora', serif; font-weight:700;
+  font-size:1.15rem; color:var(--navy);
+  letter-spacing:-0.01em;
+}
+.brand img { width:36px; height:36px; }
+.brand .dot { color:var(--red); }
+.nav-links { display:flex; gap:28px; align-items:center; }
+.nav-links a {
+  font-size:0.92rem; font-weight:500; color:var(--text-dim);
+}
+.nav-links a:hover { color:var(--navy); }
+.nav-search {
+  display:flex; align-items:center; gap:8px;
+  background:var(--cream-warm); border:1px solid var(--border-soft);
+  padding:8px 14px; border-radius:999px;
+  font-size:0.88rem; color:var(--text-dim);
+  min-width:220px;
+}
+.nav-search:focus-within { border-color:var(--navy-soft); background:var(--paper); }
+.nav-search input {
+  border:none; background:none; outline:none; flex:1;
+  font-family:inherit; font-size:inherit; color:var(--text);
 }
 
-.logo-wrap {
-  position: relative;
-  z-index: 1;
-  margin-bottom: 36px;
-  animation: fadeInDown 0.8s ease-out;
+/* ── HERO ────────────────────────────────────────────── */
+.hero {
+  padding:72px 28px 56px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
 }
-.logo-wrap img {
-  display: block;
-  width: 160px;
-  height: 160px;
-  filter: drop-shadow(0 12px 32px rgba(9, 57, 94, 0.18));
+.hero::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse 60% 50% at 50% 0%, rgba(9,57,94,0.05), transparent 65%);
+  pointer-events:none;
 }
-
-.content {
-  max-width: 680px;
-  text-align: center;
-  position: relative;
-  z-index: 1;
-  animation: fadeInUp 0.8s ease-out 0.15s both;
-}
-
+.hero-inner { max-width:780px; margin:0 auto; position:relative; }
 .eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: var(--red);
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  padding: 8px 16px;
-  background: rgba(197, 48, 48, 0.08);
-  border: 1px solid rgba(197, 48, 48, 0.2);
-  border-radius: 999px;
-  margin-bottom: 32px;
+  display:inline-flex; align-items:center; gap:8px;
+  font-size:0.72rem; font-weight:600; letter-spacing:2px;
+  text-transform:uppercase; color:var(--red);
+  background:rgba(197,48,48,0.08);
+  border:1px solid rgba(197,48,48,0.18);
+  padding:6px 14px; border-radius:999px;
+  margin-bottom:24px;
 }
 .eyebrow::before {
-  content: '';
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--red);
-  animation: pulse 2s ease-in-out infinite;
+  content:''; width:6px; height:6px; border-radius:50%;
+  background:var(--red); animation:pulse 2s infinite;
 }
 @keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(1.2); }
+  0%,100% { opacity:1; transform:scale(1); }
+  50% { opacity:0.5; transform:scale(1.3); }
+}
+.hero h1 {
+  font-family:'Lora', serif;
+  font-weight:700;
+  font-size:clamp(2.4rem, 5.5vw, 3.6rem);
+  line-height:1.1;
+  color:var(--navy);
+  letter-spacing:-0.02em;
+  margin-bottom:18px;
+}
+.hero h1 .accent { color:var(--red); }
+.hero .tagline {
+  font-family:'Nunito', sans-serif;
+  font-weight:800; font-size:1.18rem;
+  color:var(--navy);
+  margin-bottom:22px;
+}
+.hero .tagline .sep {
+  display:inline-block; width:4px; height:4px; border-radius:50%;
+  background:var(--text-muted); margin:0 14px; vertical-align:middle;
+  position:relative; top:-3px;
+}
+.hero .lede {
+  font-size:1.05rem; color:var(--text-dim);
+  max-width:600px; margin:0 auto 36px;
 }
 
-h1 {
-  font-family: 'Lora', Georgia, serif;
-  font-weight: 700;
-  font-size: clamp(2.5rem, 6.5vw, 4rem);
-  line-height: 1.05;
-  color: var(--navy);
-  margin-bottom: 18px;
-  letter-spacing: -0.02em;
+.stats-bar {
+  display:flex; justify-content:center; gap:0;
+  border-top:1px solid var(--border-soft);
+  border-bottom:1px solid var(--border-soft);
+  padding:24px 0;
+  max-width:780px; margin:0 auto;
+  flex-wrap:wrap;
 }
-h1 .em-dash {
-  color: var(--red);
-  font-weight: 700;
-  margin: 0 0.05em;
+.stat {
+  flex:1; min-width:140px; padding:0 24px;
+  border-right:1px solid var(--border-soft);
+  text-align:center;
 }
-h1 .secondary {
-  display: block;
-  font-style: italic;
-  font-weight: 600;
-  color: var(--navy-soft);
-  font-size: 0.85em;
-  margin-top: 4px;
+.stat:last-child { border-right:none; }
+.stat .num {
+  font-family:'Lora', serif; font-weight:700;
+  font-size:2rem; color:var(--navy);
+  line-height:1;
 }
-
-.tagline {
-  font-family: 'Nunito', 'Inter', sans-serif;
-  font-weight: 800;
-  font-size: clamp(1.05rem, 2.4vw, 1.35rem);
-  letter-spacing: -0.005em;
-  margin: 28px 0 24px;
-  color: var(--navy);
-}
-.tagline .accent {
-  color: var(--red);
-}
-.tagline .sep {
-  display: inline-block;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--text-muted);
-  margin: 0 14px;
-  vertical-align: middle;
-  position: relative;
-  top: -3px;
+.stat .label {
+  font-size:0.72rem; font-weight:600; letter-spacing:1.5px;
+  text-transform:uppercase; color:var(--text-muted);
+  margin-top:8px;
 }
 
-.subtitle {
-  font-size: 1.02rem;
-  color: var(--text-dim);
-  max-width: 520px;
-  margin: 0 auto;
-  line-height: 1.65;
+/* ── SECTIONS ─────────────────────────────────────── */
+section { padding:72px 28px; }
+.section-inner { max-width:1160px; margin:0 auto; }
+.section-head { margin-bottom:40px; max-width:680px; }
+.section-eyebrow {
+  font-size:0.72rem; font-weight:600; letter-spacing:2.5px;
+  text-transform:uppercase; color:var(--red);
+  margin-bottom:12px;
+}
+.section-head h2 {
+  font-family:'Lora', serif; font-weight:700;
+  font-size:clamp(1.8rem, 3.2vw, 2.4rem);
+  color:var(--navy);
+  letter-spacing:-0.015em;
+  line-height:1.15;
+  margin-bottom:14px;
+}
+.section-head p {
+  font-size:1.02rem; color:var(--text-dim);
+  max-width:600px;
 }
 
-.divider {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 36px auto 28px;
-  max-width: 200px;
+/* ── POLICY FOCUS ─────────────────────────────────── */
+.section-policy { background:var(--paper); border-top:1px solid var(--border-soft); border-bottom:1px solid var(--border-soft); }
+.policy-grid {
+  display:grid; grid-template-columns:repeat(3, 1fr); gap:28px;
 }
-.divider .line {
-  flex: 1;
-  height: 1px;
-  background: var(--border);
+@media (max-width:920px) {
+  .policy-grid { grid-template-columns:1fr; }
 }
-.divider .star {
-  color: var(--red);
-  font-size: 0.9rem;
+.policy-card {
+  background:var(--cream); border:1px solid var(--border-soft);
+  border-radius:16px; padding:32px;
+  display:flex; flex-direction:column; gap:18px;
+  transition:transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+.policy-card:hover {
+  transform:translateY(-3px);
+  box-shadow:0 18px 40px rgba(9,57,94,0.08);
+  border-color:var(--navy-soft);
+}
+.policy-icon {
+  width:52px; height:52px; border-radius:12px;
+  background:var(--cream-warm);
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.6rem;
+  border:1px solid var(--border-soft);
+}
+.policy-card h3 {
+  font-family:'Lora', serif; font-weight:700;
+  font-size:1.4rem; color:var(--navy);
+  letter-spacing:-0.01em;
+}
+.policy-card .desc {
+  font-size:0.95rem; color:var(--text-dim);
+  margin-bottom:4px;
+}
+.policy-stat {
+  display:flex; gap:18px; padding:12px 0;
+  border-top:1px solid var(--border-soft);
+  border-bottom:1px solid var(--border-soft);
+  font-size:0.85rem; font-weight:500;
+}
+.policy-stat .pill {
+  display:inline-flex; align-items:center; gap:6px;
+  color:var(--text-dim);
+}
+.policy-stat .pill strong {
+  font-family:'Lora', serif; font-weight:700;
+  font-size:1.05rem; color:var(--navy);
+}
+.bill-list {
+  list-style:none; display:flex; flex-direction:column; gap:10px;
+}
+.bill-item {
+  padding:10px 0; border-bottom:1px dashed var(--border-soft);
+}
+.bill-item:last-child { border-bottom:none; }
+.bill-num {
+  display:inline-block;
+  font-family:'Inter', monospace;
+  font-size:0.72rem; font-weight:700;
+  background:var(--cream-warm);
+  color:var(--navy);
+  padding:2px 8px; border-radius:4px;
+  letter-spacing:0.5px; margin-right:8px;
+  border:1px solid var(--border-soft);
+}
+.bill-num.federal { background:rgba(9,57,94,0.08); color:var(--navy-deep); }
+.bill-title {
+  font-size:0.88rem; color:var(--text);
+  line-height:1.45;
+}
+.policy-actions { display:flex; gap:10px; margin-top:auto; padding-top:8px; }
+.btn {
+  display:inline-flex; align-items:center; gap:8px;
+  padding:10px 18px; border-radius:8px;
+  font-family:inherit; font-size:0.88rem; font-weight:600;
+  cursor:pointer; transition:all 0.2s;
+  text-decoration:none;
+  border:1px solid transparent;
+}
+.btn-primary {
+  background:var(--red); color:white;
+}
+.btn-primary:hover { background:var(--red-deep); color:white; }
+.btn-ghost {
+  background:transparent; color:var(--navy);
+  border-color:var(--border);
+}
+.btn-ghost:hover { border-color:var(--navy); background:var(--cream-warm); color:var(--navy); }
+.btn-link {
+  background:transparent; color:var(--navy);
+  padding:10px 0;
+}
+.btn-link:hover { color:var(--red); }
+
+/* ── NEWS ─────────────────────────────────────────── */
+.news-grid {
+  display:grid; grid-template-columns:repeat(2, 1fr); gap:24px;
+}
+@media (max-width:740px) { .news-grid { grid-template-columns:1fr; } }
+.news-card {
+  background:var(--paper); border:1px solid var(--border-soft);
+  border-radius:14px; padding:24px;
+  display:flex; flex-direction:column; gap:12px;
+  transition:transform 0.2s, box-shadow 0.2s;
+}
+.news-card:hover {
+  transform:translateY(-2px);
+  box-shadow:0 12px 32px rgba(9,57,94,0.06);
+}
+.news-meta {
+  display:flex; gap:12px; align-items:center;
+  font-size:0.74rem; font-weight:600; letter-spacing:0.8px;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+.news-meta .source { color:var(--red); }
+.news-meta .tn-tag {
+  background:rgba(45,106,79,0.1); color:var(--green);
+  padding:2px 8px; border-radius:4px; letter-spacing:0.5px;
+}
+.news-card h3 {
+  font-family:'Lora', serif; font-weight:600;
+  font-size:1.15rem; color:var(--navy);
+  line-height:1.35; letter-spacing:-0.005em;
+}
+.news-card p {
+  font-size:0.92rem; color:var(--text-dim);
+  line-height:1.55;
+}
+.news-card .read-more {
+  font-size:0.85rem; font-weight:600;
+  color:var(--red); margin-top:auto; padding-top:8px;
 }
 
-.brand-mark {
-  font-family: 'Lora', serif;
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--navy);
-  letter-spacing: 1.2px;
+/* ── LEGISLATORS ──────────────────────────────────── */
+.section-legislators { background:var(--cream-warm); }
+.leg-layout {
+  display:grid; grid-template-columns:1fr 1.4fr; gap:48px;
+  align-items:start;
 }
-.brand-mark .dot {
-  color: var(--red);
+@media (max-width:880px) { .leg-layout { grid-template-columns:1fr; } }
+.leg-finder {
+  background:var(--paper); border:1px solid var(--border-soft);
+  border-radius:16px; padding:32px;
+}
+.leg-finder h3 {
+  font-family:'Lora', serif; font-weight:700;
+  font-size:1.25rem; color:var(--navy);
+  margin-bottom:14px;
+}
+.leg-finder p {
+  font-size:0.92rem; color:var(--text-dim);
+  margin-bottom:20px;
+}
+.zip-form {
+  display:flex; gap:8px;
+}
+.zip-form input {
+  flex:1; padding:12px 16px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  font-family:inherit; font-size:0.95rem;
+  background:var(--cream); color:var(--text);
+  outline:none; transition:border-color 0.2s;
+}
+.zip-form input:focus { border-color:var(--navy-soft); }
+
+.leg-feature {
+  display:flex; flex-direction:column; gap:14px;
+}
+.leg-feature h4 {
+  font-family:'Inter', sans-serif; font-weight:600;
+  font-size:0.78rem; letter-spacing:1.2px; text-transform:uppercase;
+  color:var(--text-muted);
+  margin-bottom:6px;
+}
+.leg-card {
+  background:var(--paper); border:1px solid var(--border-soft);
+  border-radius:12px; padding:18px 20px;
+  display:flex; align-items:center; gap:16px;
+  transition:border-color 0.2s, transform 0.2s;
+}
+.leg-card:hover { border-color:var(--navy-soft); transform:translateX(2px); }
+.leg-avatar {
+  width:48px; height:48px; border-radius:50%;
+  background:var(--cream-warm); border:1px solid var(--border-soft);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Lora', serif; font-weight:700;
+  color:var(--navy);
+  font-size:1.1rem;
+  flex-shrink:0;
+}
+.leg-info { flex:1; }
+.leg-name {
+  font-weight:600; color:var(--navy);
+  font-size:0.98rem;
+}
+.leg-role {
+  font-size:0.82rem; color:var(--text-dim);
+  margin-top:2px;
+}
+.leg-action {
+  font-size:0.82rem; font-weight:600;
+  color:var(--red);
 }
 
+/* ── CTA ─────────────────────────────────────────── */
+.cta-band {
+  background:var(--navy);
+  color:white;
+  padding:56px 28px;
+  text-align:center;
+}
+.cta-band h2 {
+  font-family:'Lora', serif; font-weight:700;
+  font-size:clamp(1.7rem, 3vw, 2.2rem);
+  margin-bottom:14px; color:white;
+  letter-spacing:-0.015em;
+}
+.cta-band p {
+  font-size:1rem; color:rgba(255,255,255,0.8);
+  max-width:540px; margin:0 auto 24px;
+}
+.cta-band .btn-primary { background:var(--red); }
+.cta-band .btn-primary:hover { background:white; color:var(--navy); }
+
+/* ── FOOTER ───────────────────────────────────────── */
 footer {
-  position: absolute;
-  bottom: 28px;
-  left: 0;
-  right: 0;
-  text-align: center;
-  font-size: 0.78rem;
-  color: var(--text-muted);
-  z-index: 1;
+  background:var(--cream);
+  border-top:1px solid var(--border-soft);
+  padding:48px 28px 32px;
 }
-footer a {
-  color: var(--navy-soft);
-  text-decoration: none;
-  font-weight: 500;
+.footer-inner {
+  max-width:1160px; margin:0 auto;
+  display:grid; grid-template-columns:1.5fr 1fr 1fr 1fr; gap:36px;
 }
-footer a:hover { color: var(--red); }
+@media (max-width:740px) {
+  .footer-inner { grid-template-columns:1fr 1fr; }
+}
+.footer-brand { display:flex; flex-direction:column; gap:14px; }
+.footer-brand .brand img { width:48px; height:48px; }
+.footer-brand p {
+  font-size:0.88rem; color:var(--text-dim);
+  max-width:280px; line-height:1.55;
+}
+.footer-col h5 {
+  font-family:'Inter', sans-serif; font-weight:600;
+  font-size:0.78rem; letter-spacing:1.2px; text-transform:uppercase;
+  color:var(--text-muted);
+  margin-bottom:14px;
+}
+.footer-col ul { list-style:none; display:flex; flex-direction:column; gap:8px; }
+.footer-col a { font-size:0.92rem; color:var(--text-dim); }
+.footer-col a:hover { color:var(--navy); }
+.footer-bottom {
+  max-width:1160px; margin:36px auto 0;
+  padding-top:24px;
+  border-top:1px solid var(--border-soft);
+  display:flex; justify-content:space-between; align-items:center;
+  flex-wrap:wrap; gap:12px;
+  font-size:0.82rem; color:var(--text-muted);
+}
+.footer-bottom .last-updated {
+  display:inline-flex; align-items:center; gap:6px;
+}
+.footer-bottom .dot {
+  width:6px; height:6px; border-radius:50%;
+  background:var(--green);
+}
 
-@keyframes fadeInDown {
-  from { opacity: 0; transform: translateY(-12px); }
-  to { opacity: 1; transform: translateY(0); }
+/* ── DEV-STATUS BANNER ─────────────────── */
+.status-banner {
+  background:var(--cream-warm);
+  border-bottom:1px solid var(--border-soft);
+  padding:8px 28px;
+  text-align:center;
+  font-size:0.82rem; color:var(--text-dim);
+  letter-spacing:0.2px;
 }
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@media (max-width: 540px) {
-  body { padding: 32px 20px 80px; }
-  .logo-wrap { margin-bottom: 24px; }
-  .logo-wrap img { width: 120px; height: 120px; }
-  .eyebrow { margin-bottom: 24px; font-size: 0.68rem; padding: 6px 14px; }
-  h1 { margin-bottom: 14px; }
-  .tagline { margin: 22px 0 20px; }
-  .tagline .sep { margin: 0 10px; }
-  .subtitle { font-size: 0.96rem; }
-  .divider { margin: 28px auto 20px; }
+.status-banner strong { color:var(--navy); font-weight:600; }
+.status-banner .pulse {
+  display:inline-block; width:6px; height:6px;
+  border-radius:50%; background:var(--green);
+  margin-right:6px; vertical-align:middle;
+  position:relative; top:-1px;
+  animation:pulse 2s infinite;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --cream: #0a1929;
-    --cream-warm: #0f2236;
-    --paper: #122a44;
-    --text: #e6edf5;
-    --text-dim: #95acc4;
-    --text-muted: #6b85a3;
-    --border: rgba(255, 255, 255, 0.08);
-  }
-  h1 { color: #e6edf5; }
-  h1 .secondary { color: #b8cce0; }
-  .tagline { color: #e6edf5; }
-  .brand-mark { color: #e6edf5; }
-  body::before {
-    background:
-      radial-gradient(ellipse 70% 50% at 50% 0%, rgba(9, 57, 94, 0.4), transparent 65%),
-      radial-gradient(ellipse 50% 40% at 50% 100%, rgba(197, 48, 48, 0.1), transparent 70%);
-  }
+/* ── COMING-SOON PILL ─────────────── */
+.coming-soon {
+  display:inline-block;
+  font-size:0.65rem; font-weight:700;
+  background:rgba(176,112,36,0.12);
+  color:var(--amber);
+  padding:2px 8px; border-radius:4px;
+  letter-spacing:0.8px; text-transform:uppercase;
+  margin-left:6px;
+  vertical-align:middle;
+  border:1px solid rgba(176,112,36,0.25);
 }
+
+/* ── NOTIFY FORM ───────────────────────────────── */
+.notify-form {
+  display:flex; gap:8px; max-width:440px; margin:24px auto 0;
+}
+.notify-form input {
+  flex:1; padding:14px 18px;
+  border:1px solid rgba(255,255,255,0.18);
+  border-radius:8px;
+  background:rgba(255,255,255,0.08); color:white;
+  font-family:inherit; font-size:0.95rem;
+  outline:none;
+}
+.notify-form input::placeholder { color:rgba(255,255,255,0.55); }
+.notify-form input:focus { background:rgba(255,255,255,0.14); border-color:rgba(255,255,255,0.4); }
+.notify-form button { white-space:nowrap; }
 </style>
 </head>
 <body>
 
-<div class="logo-wrap">
-  <img src="/assets/logo.png" alt="ECPolicyWatch logo: U.S. Capitol dome with children silhouettes" width="160" height="160">
+<div class="status-banner">
+  <span class="pulse"></span> <strong>In active development</strong> — landing page is live, full bill tracker launching soon. Drop your email at the bottom for updates.
 </div>
 
-<main class="content">
-  <span class="eyebrow">In progress</span>
+<!-- ── NAV ──────────────────────────────────────── -->
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a href="#" class="brand">
+      <img src="https://raw.githubusercontent.com/jessicabsimp/ECPolicyWatch/main/assets/logo.png" alt="ECPolicyWatch logo">
+      <span>ecpolicywatch<span class="dot">.</span>org</span>
+    </a>
+    <div class="nav-links">
+      <a href="#policy-focus">Policy Focus</a>
+      <a href="#news">In the News</a>
+      <a href="#legislators">Legislators</a>
+      <a href="#take-action">Take Action</a>
+    </div>
+    <div class="nav-search">
+      <span>🔍</span>
+      <input type="search" placeholder="Search bills, sponsors, topics…" aria-label="Search">
+    </div>
+  </div>
+</nav>
 
-  <h1>
-    ECPolicyWatch <span class="em-dash">—</span><br>
-    <span class="secondary">Updates coming soon</span>
-  </h1>
+<!-- ── HERO ─────────────────────────────────────── -->
+<section class="hero" id="top">
+  <div class="hero-inner">
+    <span class="eyebrow">Tracking the 114th General Assembly · 119th Congress</span>
+    <h1>Watching <span class="accent">Policies.</span><br>Protecting Childhood.</h1>
+    <p class="tagline">Tennessee<span class="sep"></span>Federal<span class="sep"></span>Updated weekly</p>
+    <p class="lede">A non-partisan tracker for legislation affecting young children and their families — early childhood, child hunger, and parental support. Find the bills that matter, then make your voice heard.</p>
+  </div>
+  <div class="stats-bar">
+    <div class="stat"><div class="num">730</div><div class="label">TN bills</div></div>
+    <div class="stat"><div class="num">1,297</div><div class="label">Federal bills</div></div>
+    <div class="stat"><div class="num">3</div><div class="label">Focus areas</div></div>
+    <div class="stat"><div class="num">Apr 30</div><div class="label">Last refreshed</div></div>
+  </div>
+</section>
 
-  <p class="tagline">
-    Watching <span class="accent">Policies</span><span class="sep"></span><span class="accent">Protecting</span> Childhood
+<!-- ── POLICY FOCUS ─────────────────────────────── -->
+<section class="section-policy" id="policy-focus">
+  <div class="section-inner">
+    <div class="section-head">
+      <div class="section-eyebrow">Policy Focus</div>
+      <h2>Three areas. Every bill that matters.</h2>
+      <p>We track legislation in three focus areas, surface what's actively moving, and give you the tools to weigh in. Pick an area to see the bills, the sponsors, and a ready-to-send email to your legislators.</p>
+    </div>
+
+    <div class="policy-grid">
+
+      <!-- Early Childhood -->
+      <article class="policy-card">
+        <div class="policy-icon">🌱</div>
+        <h3>Early Childhood</h3>
+        <p class="desc">Childcare access, pre-K funding, Head Start, early intervention, kindergarten, and the workforce that supports our youngest learners.</p>
+        <div class="policy-stat">
+          <span class="pill"><strong>263</strong> bills</span>
+          <span class="pill"><strong>89</strong> TN</span>
+          <span class="pill"><strong>174</strong> Federal</span>
+        </div>
+        <ul class="bill-list">
+          <li class="bill-item">
+            <span class="bill-num">HB0006</span>
+            <span class="bill-title">An Act relative to early childhood education</span>
+          </li>
+          <li class="bill-item">
+            <span class="bill-num federal">HB1296</span>
+            <span class="bill-title">Expanding Child Care Access Act of 2025</span>
+          </li>
+          <li class="bill-item">
+            <span class="bill-num federal">HB1067</span>
+            <span class="bill-title">LITTLE Act of 2025 — Lowering Infant and Toddler Tuition</span>
+          </li>
+        </ul>
+        <div class="policy-actions">
+          <a class="btn btn-primary" href="#take-action">✉ Email legislators<span class="coming-soon">Soon</span></a>
+          <a class="btn btn-link" href="#take-action">View all 263 →</a>
+        </div>
+      </article>
+
+      <!-- Child Hunger -->
+      <article class="policy-card">
+        <div class="policy-icon">🥪</div>
+        <h3>Child Hunger</h3>
+        <p class="desc">School meals, summer EBT, food assistance, USDA programs, and policies that ensure no child in Tennessee goes hungry.</p>
+        <div class="policy-stat">
+          <span class="pill"><strong>23</strong> bills</span>
+          <span class="pill"><strong>9</strong> TN</span>
+          <span class="pill"><strong>14</strong> Federal</span>
+        </div>
+        <ul class="bill-list">
+          <li class="bill-item">
+            <span class="bill-num">HB0007</span>
+            <span class="bill-title">Hunger-free campus grant program</span>
+          </li>
+          <li class="bill-item">
+            <span class="bill-num">HB0012</span>
+            <span class="bill-title">Tennessee school meals provision</span>
+          </li>
+          <li class="bill-item">
+            <span class="bill-num federal">HB2680</span>
+            <span class="bill-title">Expanding Access to School Meals Act of 2025</span>
+          </li>
+        </ul>
+        <div class="policy-actions">
+          <a class="btn btn-primary" href="#take-action">✉ Email legislators<span class="coming-soon">Soon</span></a>
+          <a class="btn btn-link" href="#take-action">View all 23 →</a>
+        </div>
+      </article>
+
+      <!-- Parental Support -->
+      <article class="policy-card">
+        <div class="policy-icon">👨‍👩‍👧</div>
+        <h3>Parental Support</h3>
+        <p class="desc">Paid family leave, child tax credit, maternal health, foster care, adoption, and the policy frameworks that hold families up.</p>
+        <div class="policy-stat">
+          <span class="pill"><strong>201</strong> bills</span>
+          <span class="pill"><strong>62</strong> TN</span>
+          <span class="pill"><strong>139</strong> Federal</span>
+        </div>
+        <ul class="bill-list">
+          <li class="bill-item">
+            <span class="bill-num">HB0102</span>
+            <span class="bill-title">Adoption records reform</span>
+          </li>
+          <li class="bill-item">
+            <span class="bill-num federal">HB1425</span>
+            <span class="bill-title">Expanding the Child Tax Credit (fully refundable)</span>
+          </li>
+          <li class="bill-item">
+            <span class="bill-num federal">HB1426</span>
+            <span class="bill-title">Dependent Care Tax Credit expansion</span>
+          </li>
+        </ul>
+        <div class="policy-actions">
+          <a class="btn btn-primary" href="#take-action">✉ Email legislators<span class="coming-soon">Soon</span></a>
+          <a class="btn btn-link" href="#take-action">View all 201 →</a>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── NEWS ─────────────────────────────────────── -->
+<section id="news">
+  <div class="section-inner">
+    <div class="section-head">
+      <div class="section-eyebrow">In the News</div>
+      <h2>What's happening this week.</h2>
+      <p>Curated reporting from Tennessee and national outlets covering early childhood policy, the legislature, and the families behind the headlines.</p>
+    </div>
+
+    <div class="news-grid">
+
+      <article class="news-card">
+        <div class="news-meta">
+          <span class="source">Tennessee Lookout</span>
+          <span>Apr 8, 2026</span>
+          <span class="tn-tag">TN</span>
+        </div>
+        <h3>Will TN voucher program expand by 15,000 or 20,000 seats? House and Senate are at odds.</h3>
+        <p>The Tennessee General Assembly is split on the size of the state's expanding voucher program, with implications for funding pulled from public early-childhood programs…</p>
+        <a href="https://tennesseelookout.com/2026/04/08/will-tn-voucher-program-expand-by-15000-or-20000-seats-house-and-senate-are-at-odds-on-details/" class="read-more" target="_blank" rel="noopener noreferrer">Read at Tennessee Lookout →</a>
+      </article>
+
+      <article class="news-card">
+        <div class="news-meta">
+          <span class="source">The 74 Million</span>
+          <span>Apr 8, 2026</span>
+        </div>
+        <h3>Opinion: When Work Isn't 9-to-5, Child Care Can't Be Either</h3>
+        <p>New York City and New Mexico are rolling out ambitious universal child care plans that account for the realities of non-traditional work hours — what could TN learn?</p>
+        <a href="https://www.the74million.org/zero2eight/when-work-isnt-9-to-5-child-care-cant-be-either/" class="read-more" target="_blank" rel="noopener noreferrer">Read at The 74 →</a>
+      </article>
+
+      <article class="news-card">
+        <div class="news-meta">
+          <span class="source">Tennessee Lookout</span>
+          <span>Apr 8, 2026</span>
+          <span class="tn-tag">TN</span>
+        </div>
+        <h3>Tennessee lawmakers approve state disaster fund to help fill federal aid gaps</h3>
+        <p>A $100 million state disaster fund moves forward, intended to provide assistance when FEMA aid falls short — including for families displaced from childcare programs…</p>
+        <a href="https://tennesseelookout.com/2026/04/08/tennessee-lawmakers-approve-state-disaster-fund-to-help-fill-federal-aid-gaps/" class="read-more" target="_blank" rel="noopener noreferrer">Read at Tennessee Lookout →</a>
+      </article>
+
+      <article class="news-card">
+        <div class="news-meta">
+          <span class="source">Chalkbeat Tennessee</span>
+          <span>Apr 7, 2026</span>
+          <span class="tn-tag">TN</span>
+        </div>
+        <h3>How Tennessee's Pre-K funding formula compares to neighboring states</h3>
+        <p>A side-by-side look at how Tennessee's voluntary pre-K compares with Kentucky, Georgia, and North Carolina — what enrollment data tells us about access gaps…</p>
+        <a href="#take-action" class="read-more">More coverage coming →</a>
+      </article>
+
+    </div>
+
+    <div style="text-align:center; margin-top:36px;">
+      <a class="btn btn-ghost" href="#">All news articles →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── LEGISLATORS ──────────────────────────────── -->
+<section class="section-legislators" id="legislators">
+  <div class="section-inner">
+    <div class="section-head">
+      <div class="section-eyebrow">Legislators</div>
+      <h2>Find yours. Tell them where you stand.</h2>
+      <p>Search by your address to find your TN representative, senator, and federal delegation. Save legislators you care about and email them directly with one of our policy templates.</p>
+    </div>
+
+    <div class="leg-layout">
+
+      <div class="leg-finder">
+        <h3>Find your representatives</h3>
+        <p>Enter your home address or zip code to find the TN and federal officials who represent you.</p>
+        <form class="zip-form" onsubmit="event.preventDefault()">
+          <input type="text" placeholder="ZIP code or full address" aria-label="Address">
+          <button type="submit" class="btn btn-primary">Find</button>
+        </form>
+        <div style="margin-top:18px; font-size:0.82rem; color:var(--text-muted);">
+          We never store or share your address. Search runs locally in your browser.
+        </div>
+      </div>
+
+      <div class="leg-feature">
+        <h4>Active sponsors on early-childhood bills</h4>
+
+        <a href="#" class="leg-card">
+          <div class="leg-avatar">MB</div>
+          <div class="leg-info">
+            <div class="leg-name">Marsha Blackburn</div>
+            <div class="leg-role">U.S. Senate · Tennessee · Republican</div>
+          </div>
+          <span class="leg-action">12 bills →</span>
+        </a>
+
+        <a href="#" class="leg-card">
+          <div class="leg-avatar">SC</div>
+          <div class="leg-info">
+            <div class="leg-name">Steve Cohen</div>
+            <div class="leg-role">U.S. House · TN-9 · Democrat</div>
+          </div>
+          <span class="leg-action">8 bills →</span>
+        </a>
+
+        <a href="#" class="leg-card">
+          <div class="leg-avatar">CS</div>
+          <div class="leg-info">
+            <div class="leg-name">Cameron Sexton</div>
+            <div class="leg-role">TN House · Speaker · District 25</div>
+          </div>
+          <span class="leg-action">6 bills →</span>
+        </a>
+
+        <a href="#" class="leg-card">
+          <div class="leg-avatar">RM</div>
+          <div class="leg-info">
+            <div class="leg-name">Randy McNally</div>
+            <div class="leg-role">TN Senate · Lt. Governor · District 5</div>
+          </div>
+          <span class="leg-action">4 bills →</span>
+        </a>
+
+        <div style="text-align:center; margin-top:8px;">
+          <a class="btn btn-ghost" href="#">Browse all 764 sponsors →</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ─────────────────────────────────────── -->
+<section class="cta-band" id="take-action">
+  <h2>Get notified when the full tracker launches.</h2>
+  <p>The bill list, watchlist, email-your-legislators templates, and weekly summaries are in active development. Leave your email and we'll send a single note when it's ready — no spam, no ads, no nonsense.</p>
+  <form class="notify-form" action="mailto:robertsbjess@gmail.com" method="post" enctype="text/plain">
+    <input type="email" name="email" placeholder="you@example.com" aria-label="Your email address" required>
+    <button type="submit" class="btn btn-primary">Notify me</button>
+  </form>
+  <p style="margin-top:18px; font-size:0.82rem; color:rgba(255,255,255,0.5);">
+    We'll only email you once: when ECPolicyWatch is fully live.
   </p>
+</section>
 
-  <p class="subtitle">
-    We're refreshing the tracker. Check back shortly for updated Tennessee and federal early childhood legislation coverage.
-  </p>
+<!-- ── FOOTER ──────────────────────────────────── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="#" class="brand">
+        <img src="https://raw.githubusercontent.com/jessicabsimp/ECPolicyWatch/main/assets/logo.png" alt="ECPolicyWatch logo">
+        <span>ecpolicywatch<span class="dot">.</span>org</span>
+      </a>
+      <p>An independent, non-partisan tracker for early childhood, child hunger, and parental support legislation in Tennessee.</p>
+    </div>
 
-  <div class="divider">
-    <span class="line"></span>
-    <span class="star">★</span>
-    <span class="line"></span>
+    <div class="footer-col">
+      <h5>Track</h5>
+      <ul>
+        <li><a href="#">Early Childhood</a></li>
+        <li><a href="#">Child Hunger</a></li>
+        <li><a href="#">Parental Support</a></li>
+        <li><a href="#">All bills</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h5>Engage</h5>
+      <ul>
+        <li><a href="#">Find your legislators</a></li>
+        <li><a href="#">Email templates</a></li>
+        <li><a href="#">Watchlist</a></li>
+        <li><a href="#">News feed</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h5>About</h5>
+      <ul>
+        <li><a href="#">Methodology</a></li>
+        <li><a href="#">Data sources</a></li>
+        <li><a href="#">Contact us</a></li>
+        <li><a href="https://github.com/jessicabsimp/ECPolicyWatch">GitHub</a></li>
+      </ul>
+    </div>
   </div>
 
-  <p class="brand-mark">ecpolicywatch<span class="dot">.</span>com</p>
-</main>
-
-<footer>
-  &copy; <script>document.write(new Date().getFullYear())</script> ECPolicyWatch. All rights reserved.
+  <div class="footer-bottom">
+    <span>© 2026 ECPolicyWatch · An Echo &amp; Orbit civic project</span>
+    <span class="last-updated"><span class="dot"></span> Data refreshed Apr 30, 2026</span>
+  </div>
 </footer>
 
 </body>
