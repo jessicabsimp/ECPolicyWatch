@@ -277,9 +277,10 @@ nav.site-nav {
 }
 .bill-status {
   font-size:0.82rem; color:var(--text-dim);
-  display:flex; align-items:center; gap:6px;
+  display:flex; align-items:center; gap:8px;
   padding-top:10px;
   border-top:1px dashed var(--border-soft);
+  flex-wrap:wrap;
 }
 .bill-status .dot {
   width:8px; height:8px; border-radius:50%;
@@ -291,6 +292,19 @@ nav.site-nav {
 .bill-status.signed .dot { background:var(--green); }
 .bill-status.vetoed .dot { background:var(--red); }
 .bill-status.archived .dot { background:var(--text-muted); }
+.bill-status-text {
+  flex:1; min-width:0;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.bill-date {
+  font-size:0.74rem; color:var(--text-muted);
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+  letter-spacing:0.2px;
+  padding-left:6px;
+  border-left:1px solid var(--border-soft);
+  flex-shrink:0;
+}
 
 .bill-tags { display:flex; flex-wrap:wrap; gap:6px; }
 .tag {
@@ -539,6 +553,12 @@ footer {
     </label>
 
     <label class="toggle">
+      <input type="checkbox" id="include-inactive">
+      <span class="toggle-track"></span>
+      <span>Include inactive bills</span>
+    </label>
+
+    <label class="toggle">
       <input type="checkbox" id="show-archived">
       <span class="toggle-track"></span>
       <span>Include archived sessions</span>
@@ -556,6 +576,7 @@ footer {
   <div>
     <label style="margin-right:8px; font-size:0.78rem; letter-spacing:1px; text-transform:uppercase; color:var(--text-muted);">Sort</label>
     <select class="sort-select" id="sort">
+      <option value="recent">Recent activity</option>
       <option value="number">Bill number</option>
       <option value="title">Title (A→Z)</option>
       <option value="status">Status</option>
@@ -643,7 +664,8 @@ let state = {
   origin: 'all',
   search: '',
   showArchived: false,
-  sort: 'number',
+  includeInactive: false,
+  sort: 'recent',
   page: 1,
   selectedBillId: null
 };
@@ -668,12 +690,6 @@ function billFocusAreas(tags) {
   return [...set];
 }
 
-function billId(b) {
-  // origin-billnumber, fallback to index-based hash if no number
-  if (b.bill_number) return `${b.origin}-${b.bill_number}`;
-  return null; // skip bills without numbers
-}
-
 function statusClass(status) {
   const lower = status.toLowerCase();
   if (lower.includes('signed by governor')) return 'signed';
@@ -682,6 +698,63 @@ function statusClass(status) {
   if (lower.includes('vetoed')) return 'vetoed';
   if (lower.includes('filed') || lower.includes('introduced')) return 'filed';
   return 'archived';
+}
+
+// Bills with these statuses are hidden by default — accessible via search
+// or the "Include inactive bills" toggle.
+function isInactive(bill) {
+  const s = (bill.status || '').toLowerCase();
+  return s.startsWith('status not available') || s.startsWith('filed');
+}
+
+// ISO "YYYY-MM-DD" → "Apr 29, 2025"
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function formatDate(iso) {
+  if (!iso || !/^\d{4}-\d{2}-\d{2}/.test(iso)) return '';
+  const [y, m, d] = iso.split('-').map(Number);
+  return `${MONTHS[m-1]} ${d}, ${y}`;
+}
+
+// Strip legalese boilerplate to produce a short, scannable title.
+// Falls back to the original if the result would be too short or fails to match.
+function shortTitle(full) {
+  if (!full) return '';
+  let s = full.trim();
+  let m;
+
+  // TN: "AN ACT to amend Tennessee Code Annotated, [Title/Chapter/Part …], relative to …"
+  m = s.match(/^AN ACT to amend Tennessee Code Annotated[,;\s]+(?:.*?)\brelative to\s+(.+?)\.?$/i);
+  if (m) s = m[1];
+
+  // Federal IRC: "To amend the Internal Revenue Code of 1986 to …"
+  m = s.match(/^To amend the Internal Revenue Code(?:\s+of\s+\d+)?\s+to\s+(.+?)\.?$/i);
+  if (m) s = m[1];
+
+  // Federal generic: "To amend [the Law of YYYY] to …"
+  m = s.match(/^To amend\s+(?:the\s+[\w\s,'-]+?)(?:\s+of\s+\d+)?\s+to\s+(.+?)\.?$/i);
+  if (m) s = m[1];
+
+  // Federal: "An Act to …" / "A bill to …" / "A resolution …" / "To require …"
+  m = s.match(/^(?:An Act to|A bill to|A resolution|To require|To prohibit|To establish|To provide)\s+(.+?)\.?$/i);
+  if (m) s = m[1];
+
+  // "ACRONYM Act of YYYY [spelled out] Act of YYYY" → "ACRONYM Act of YYYY: [spelled out]"
+  m = s.match(/^([A-Z]{2,}\s+Act of \d+)\s+(.+?)\s+Act of \d+$/);
+  if (m) s = `${m[1]}: ${m[2]}`;
+
+  // Strip leading "a " / "the " (artifacts from legalese stripping)
+  s = s.replace(/^(a|the)\s+/i, '');
+
+  // Trim trailing period, capitalize first letter
+  s = s.replace(/[.,;]+$/, '').trim();
+  if (s.length > 0) s = s.charAt(0).toUpperCase() + s.slice(1);
+
+  // Truncate at 100 chars on a word boundary
+  if (s.length > 100) s = s.slice(0, 97).replace(/\s+\S*$/, '') + '…';
+
+  // Fallback if shortening produced a stub
+  if (s.length < 10) return full;
+  return s;
 }
 
 function escapeHtml(str) {
@@ -731,6 +804,7 @@ async function loadBills() {
       const tags = row[4] || [];
       const status = RAW.st[row[5]] || '';
       const url = row[6];
+      const lastUpdated = row[7] || '';
 
       if (!billNumber) continue; // skip bills without numbers (resolutions, etc.)
 
@@ -744,11 +818,13 @@ async function loadBills() {
         session,
         bill_number: billNumber,
         title,
+        shortTitle: shortTitle(title),
         tags,
         focusAreas,
         status: cleanStatus,
         rawStatus: status,
         url,
+        lastUpdated,
         isCurrentSession,
         id: `${origin}-${billNumber}`
       });
@@ -780,6 +856,12 @@ function applyFilters() {
     result = result.filter(b => b.isCurrentSession);
   }
 
+  // Hide inactive bills (Status not available / Filed) by default,
+  // but bypass when the user is actively searching or has the toggle on.
+  if (!state.includeInactive && !term) {
+    result = result.filter(b => !isInactive(b));
+  }
+
   if (state.focus !== 'all') {
     result = result.filter(b => b.focusAreas.includes(state.focus));
   }
@@ -792,21 +874,29 @@ function applyFilters() {
     result = result.filter(b =>
       b.bill_number.toLowerCase().includes(term) ||
       b.title.toLowerCase().includes(term) ||
+      b.shortTitle.toLowerCase().includes(term) ||
       b.tags.some(t => t.toLowerCase().includes(term))
     );
   }
 
   // Sort
-  if (state.sort === 'number') {
+  if (state.sort === 'recent') {
     result = result.slice().sort((a, b) => {
-      // TN first, then Federal; within each, numeric sort by digits in bill_number
+      // Bills with dates first (descending), then dateless bills by bill number
+      if (a.lastUpdated && b.lastUpdated) return b.lastUpdated.localeCompare(a.lastUpdated);
+      if (a.lastUpdated) return -1;
+      if (b.lastUpdated) return 1;
+      return a.bill_number.localeCompare(b.bill_number);
+    });
+  } else if (state.sort === 'number') {
+    result = result.slice().sort((a, b) => {
       if (a.origin !== b.origin) return a.origin === 'TN' ? -1 : 1;
       const an = parseInt(a.bill_number.replace(/\D/g, ''), 10) || 0;
       const bn = parseInt(b.bill_number.replace(/\D/g, ''), 10) || 0;
       return an - bn;
     });
   } else if (state.sort === 'title') {
-    result = result.slice().sort((a, b) => a.title.localeCompare(b.title));
+    result = result.slice().sort((a, b) => a.shortTitle.localeCompare(b.shortTitle));
   } else if (state.sort === 'status') {
     const order = ['Signed by Governor.','Passed Both Chambers','Passed First Chamber','Filed','Status not available'];
     result = result.slice().sort((a, b) => {
@@ -828,16 +918,31 @@ function renderList() {
   const loadMoreBtn = document.getElementById('load-more');
 
   countEl.textContent = filtered.length.toLocaleString();
-  contextEl.textContent = describeFilters();
+  contextEl.innerHTML = describeFilters();
 
   const hasFilters = state.focus !== 'all' || state.origin !== 'all' || state.search.trim();
   clearBtn.style.display = hasFilters ? 'inline' : 'none';
 
   if (filtered.length === 0) {
+    // Count how many bills would appear if we relaxed the inactive filter
+    const wouldShowWithInactive = !state.includeInactive
+      ? normalized.filter(b =>
+          (state.showArchived || b.isCurrentSession) &&
+          (state.focus === 'all' || b.focusAreas.includes(state.focus)) &&
+          (state.origin === 'all' || b.origin === state.origin) &&
+          isInactive(b)
+        ).length
+      : 0;
+
+    const inactiveHint = wouldShowWithInactive > 0
+      ? `<p style="margin-top:14px;"><strong>${wouldShowWithInactive}</strong> matching ${wouldShowWithInactive === 1 ? 'bill is' : 'bills are'} hidden because they're filed without further action. <a href="#" onclick="document.getElementById('include-inactive').click(); return false;">Include inactive bills</a> to see them.</p>`
+      : '';
+
     list.innerHTML = `
       <div class="empty-state" style="grid-column:1/-1">
         <h3>No bills match.</h3>
         <p>Try a broader search or clear filters.</p>
+        ${inactiveHint}
         <button class="btn btn-ghost" onclick="clearFilters()">Clear filters</button>
       </div>`;
     loadMoreBtn.style.display = 'none';
@@ -866,17 +971,20 @@ function billCardHtml(b, term) {
     return `<span class="tag ${cls}">${escapeHtml(t)}</span>`;
   }).join('');
 
+  const dateStr = b.lastUpdated ? formatDate(b.lastUpdated) : '';
+
   return `
     <button class="bill-card" data-bill-id="${escapeHtml(b.id)}" type="button">
       <div class="bill-card-head">
         <span class="bill-num ${originClass}">${escapeHtml(b.bill_number)}</span>
         <span class="bill-origin">${b.origin === 'TN' ? 'Tennessee' : 'Federal'}</span>
       </div>
-      <div class="bill-title">${highlightSearch(b.title, term)}</div>
+      <div class="bill-title">${highlightSearch(b.shortTitle, term)}</div>
       <div class="bill-tags">${tags}</div>
       <div class="bill-status ${sClass}">
         <span class="dot"></span>
-        <span>${escapeHtml(b.status)}</span>
+        <span class="bill-status-text">${escapeHtml(b.status)}</span>
+        ${dateStr ? `<span class="bill-date">${escapeHtml(dateStr)}</span>` : ''}
       </div>
     </button>`;
 }
@@ -888,6 +996,7 @@ function describeFilters() {
   if (state.search.trim()) parts.push(`matching <strong>"${escapeHtml(state.search.trim())}"</strong>`);
   if (!state.showArchived) parts.push('current sessions');
   else parts.push('all sessions');
+  if (!state.includeInactive && !state.search.trim()) parts.push('actively moving');
   return parts.join(' · ');
 }
 
@@ -926,6 +1035,7 @@ function openDetail(billId) {
     <div class="detail-section">
       <h4>Status</h4>
       <div class="detail-status ${sClass}"><span class="dot"></span><span>${escapeHtml(bill.status)}</span></div>
+      ${bill.lastUpdated ? `<div style="margin-top:8px; font-size:0.85rem; color:var(--text-dim);">Last action: <strong style="color:var(--navy);">${formatDate(bill.lastUpdated)}</strong></div>` : ''}
       ${!bill.isCurrentSession ? `<div style="margin-top:10px; font-size:0.82rem; color:var(--amber); background:var(--amber-soft); padding:8px 12px; border-radius:6px; display:inline-block;">📁 This bill is from an archived session</div>` : ''}
     </div>
 
@@ -989,6 +1099,7 @@ function updateHash() {
   if (state.origin !== 'all') parts.push(`origin=${state.origin}`);
   if (state.search.trim()) parts.push(`q=${encodeURIComponent(state.search.trim())}`);
   if (state.showArchived) parts.push(`archived=1`);
+  if (state.includeInactive) parts.push(`inactive=1`);
   if (state.selectedBillId) parts.push(`bill=${encodeURIComponent(state.selectedBillId)}`);
 
   const newHash = parts.length ? '#' + parts.join('&') : '';
@@ -1008,6 +1119,10 @@ function applyHash() {
   if (params.archived === '1') {
     state.showArchived = true;
     document.getElementById('show-archived').checked = true;
+  }
+  if (params.inactive === '1') {
+    state.includeInactive = true;
+    document.getElementById('include-inactive').checked = true;
   }
   if (params.bill) {
     state.selectedBillId = params.bill;
@@ -1030,8 +1145,10 @@ function clearFilters() {
   state.focus = 'all';
   state.origin = 'all';
   state.search = '';
+  state.includeInactive = false;
   state.page = 1;
   document.getElementById('search').value = '';
+  document.getElementById('include-inactive').checked = false;
   document.querySelectorAll('[data-group="focus"] .chip').forEach(c => c.classList.toggle('active', c.dataset.focus === 'all'));
   document.querySelectorAll('[data-group="origin"] .chip').forEach(c => c.classList.toggle('active', c.dataset.origin === 'all'));
   updateHash();
@@ -1077,6 +1194,14 @@ function bindEvents() {
   // Archived toggle
   document.getElementById('show-archived').addEventListener('change', e => {
     state.showArchived = e.target.checked;
+    state.page = 1;
+    updateHash();
+    renderList();
+  });
+
+  // Inactive toggle
+  document.getElementById('include-inactive').addEventListener('change', e => {
+    state.includeInactive = e.target.checked;
     state.page = 1;
     updateHash();
     renderList();
