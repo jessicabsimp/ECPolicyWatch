@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bill Tracker — ECPolicyWatch</title>
+<meta name="description" content="Search and filter Tennessee and federal legislation on early childhood, child hunger, and parental support — 902 active bills across the 114th General Assembly and 119th Congress.">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16.png">
+<link rel="shortcut icon" href="/assets/favicon.ico">
+<meta name="theme-color" content="#09395e">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@500;600;700&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --navy:#09395e; --navy-deep:#062a47; --navy-soft:#1a4d75;
+  --red:#c53030; --red-deep:#a02525; --red-soft:#e8d5d5;
+  --cream:#fdf9f3; --cream-warm:#f7f0e3; --paper:#ffffff;
+  --text:#0d2942; --text-dim:#4a6b8a; --text-muted:#88a0b8;
+  --border:rgba(9,57,94,0.12); --border-soft:rgba(9,57,94,0.06);
+  --green:#2d6a4f; --amber:#b07024; --amber-soft:#f4e6cc;
+  --sky:#1967D2; --sky-soft:#E8F0FE;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  background:var(--cream);
+  color:var(--text);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+img { max-width:100%; display:block; }
+a { color:var(--navy); text-decoration:none; transition:color 0.2s; }
+a:hover { color:var(--red); }
+button { font-family:inherit; }
+
+/* ── DEV-STATUS BANNER ────────────────────────── */
+.status-banner {
+  background:var(--cream-warm);
+  border-bottom:1px solid var(--border-soft);
+  padding:8px 28px;
+  text-align:center;
+  font-size:0.82rem; color:var(--text-dim);
+}
+.status-banner strong { color:var(--navy); font-weight:600; }
+.status-banner .pulse {
+  display:inline-block; width:6px; height:6px;
+  border-radius:50%; background:var(--green);
+  margin-right:6px; vertical-align:middle;
+  position:relative; top:-1px;
+  animation:pulse 2s infinite;
+}
+@keyframes pulse {
+  0%,100% { opacity:1; transform:scale(1); }
+  50% { opacity:0.5; transform:scale(1.3); }
+}
+
+/* ── NAV ──────────────────────────────────────── */
+nav.site-nav {
+  background:var(--paper);
+  border-bottom:1px solid var(--border);
+  position:sticky; top:0; z-index:50;
+  background:rgba(255,255,255,0.94);
+  backdrop-filter:blur(8px);
+}
+.nav-inner {
+  max-width:1200px; margin:0 auto;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 28px; gap:32px;
+}
+.brand {
+  display:flex; align-items:center; gap:12px;
+  font-family:'Lora', serif; font-weight:700;
+  font-size:1.15rem; color:var(--navy);
+  letter-spacing:-0.01em;
+}
+.brand img { width:36px; height:36px; }
+.brand .dot { color:var(--red); }
+.nav-links { display:flex; gap:28px; align-items:center; }
+.nav-links a {
+  font-size:0.92rem; font-weight:500; color:var(--text-dim);
+}
+.nav-links a:hover { color:var(--navy); }
+.nav-links a.active { color:var(--navy); font-weight:600; }
+
+/* ── PAGE HEADER ───────────────────────────────── */
+.page-header {
+  padding:48px 28px 28px;
+  border-bottom:1px solid var(--border-soft);
+}
+.page-header-inner { max-width:1200px; margin:0 auto; }
+.page-eyebrow {
+  font-size:0.72rem; font-weight:600; letter-spacing:2.5px;
+  text-transform:uppercase; color:var(--red);
+  margin-bottom:10px;
+}
+.page-header h1 {
+  font-family:'Lora', serif; font-weight:700;
+  font-size:clamp(2rem, 4vw, 2.8rem);
+  color:var(--navy);
+  letter-spacing:-0.018em;
+  line-height:1.1;
+  margin-bottom:12px;
+}
+.page-header p.lede {
+  font-size:1.02rem; color:var(--text-dim);
+  max-width:680px;
+}
+
+/* ── FILTERS ──────────────────────────────────── */
+.filter-bar {
+  background:var(--paper);
+  border-bottom:1px solid var(--border-soft);
+  padding:20px 28px;
+  position:sticky; top:54px; z-index:40;
+  backdrop-filter:blur(8px);
+}
+@media (max-width:740px) { .filter-bar { top:54px; } }
+.filter-bar-inner {
+  max-width:1200px; margin:0 auto;
+  display:flex; flex-wrap:wrap; gap:16px;
+  align-items:center;
+}
+.filter-group {
+  display:flex; gap:8px; flex-wrap:wrap;
+  align-items:center;
+}
+.filter-label {
+  font-size:0.7rem; font-weight:600; letter-spacing:1.2px;
+  text-transform:uppercase; color:var(--text-muted);
+  margin-right:4px;
+}
+.chip {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:6px 14px; border-radius:999px;
+  background:var(--cream); color:var(--text-dim);
+  font-size:0.85rem; font-weight:500;
+  border:1px solid var(--border-soft);
+  cursor:pointer; transition:all 0.18s;
+}
+.chip:hover { border-color:var(--navy-soft); color:var(--navy); }
+.chip.active {
+  background:var(--navy); color:white;
+  border-color:var(--navy);
+}
+.chip.active:hover { background:var(--navy-deep); color:white; }
+.chip .count {
+  font-size:0.72rem; opacity:0.7;
+  font-variant-numeric:tabular-nums;
+}
+
+.search-input {
+  flex:1; min-width:240px;
+  display:flex; align-items:center; gap:8px;
+  background:var(--cream); border:1px solid var(--border-soft);
+  padding:8px 14px; border-radius:8px;
+  transition:border-color 0.18s, background 0.18s;
+}
+.search-input:focus-within {
+  border-color:var(--navy-soft);
+  background:var(--paper);
+}
+.search-input span { color:var(--text-muted); font-size:0.95rem; }
+.search-input input {
+  border:none; background:none; outline:none; flex:1;
+  font-family:inherit; font-size:0.92rem; color:var(--text);
+}
+.search-input input::placeholder { color:var(--text-muted); }
+
+.toggle {
+  display:inline-flex; align-items:center; gap:8px;
+  font-size:0.85rem; color:var(--text-dim);
+  cursor:pointer;
+  user-select:none;
+}
+.toggle input { display:none; }
+.toggle-track {
+  width:34px; height:18px;
+  background:var(--border);
+  border-radius:999px;
+  position:relative;
+  transition:background 0.2s;
+}
+.toggle-track::after {
+  content:''; position:absolute;
+  width:14px; height:14px; border-radius:50%;
+  background:var(--paper);
+  top:2px; left:2px;
+  transition:left 0.2s;
+  box-shadow:0 1px 3px rgba(0,0,0,0.12);
+}
+.toggle input:checked + .toggle-track { background:var(--navy); }
+.toggle input:checked + .toggle-track::after { left:18px; }
+
+/* ── RESULTS BAR ──────────────────────────────── */
+.results-bar {
+  max-width:1200px; margin:0 auto;
+  padding:24px 28px 8px;
+  display:flex; justify-content:space-between; align-items:center;
+  flex-wrap:wrap; gap:12px;
+  font-size:0.88rem; color:var(--text-dim);
+}
+.results-bar strong { color:var(--navy); font-variant-numeric:tabular-nums; }
+.results-bar .clear-filters {
+  font-size:0.82rem; color:var(--red);
+  font-weight:500;
+  background:none; border:none; cursor:pointer;
+  padding:4px 8px;
+}
+.results-bar .clear-filters:hover { text-decoration:underline; }
+.sort-select {
+  background:var(--paper); border:1px solid var(--border-soft);
+  padding:6px 30px 6px 12px; border-radius:6px;
+  font-family:inherit; font-size:0.85rem; color:var(--text);
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%234a6b8a' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 8px center;
+  cursor:pointer;
+}
+
+/* ── BILL LIST ─────────────────────────────────── */
+.bill-list {
+  max-width:1200px; margin:0 auto;
+  padding:16px 28px 60px;
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(360px, 1fr));
+  gap:18px;
+}
+@media (max-width:540px) { .bill-list { grid-template-columns:1fr; padding:16px 16px 60px; } }
+
+.bill-card {
+  background:var(--paper);
+  border:1px solid var(--border-soft);
+  border-radius:12px;
+  padding:20px 22px;
+  display:flex; flex-direction:column; gap:12px;
+  transition:transform 0.18s, box-shadow 0.18s, border-color 0.18s;
+  cursor:pointer;
+  text-align:left;
+  font:inherit; color:inherit;
+  width:100%;
+}
+.bill-card:hover {
+  transform:translateY(-2px);
+  box-shadow:0 14px 32px rgba(9,57,94,0.06);
+  border-color:var(--navy-soft);
+}
+.bill-card-head {
+  display:flex; justify-content:space-between; align-items:center;
+  gap:12px;
+}
+.bill-num {
+  display:inline-block;
+  font-family:'Inter', monospace;
+  font-size:0.78rem; font-weight:700;
+  background:var(--cream-warm);
+  color:var(--navy);
+  padding:3px 10px; border-radius:4px;
+  letter-spacing:0.5px;
+  border:1px solid var(--border-soft);
+}
+.bill-num.federal { background:var(--sky-soft); color:var(--sky); border-color:rgba(25,103,210,0.18); }
+.bill-num.tn { background:rgba(197,48,48,0.08); color:var(--red); border-color:rgba(197,48,48,0.18); }
+.bill-origin {
+  font-size:0.7rem; font-weight:600; letter-spacing:0.8px;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+.bill-title {
+  font-size:0.96rem; color:var(--text);
+  line-height:1.45;
+}
+.bill-status {
+  font-size:0.82rem; color:var(--text-dim);
+  display:flex; align-items:center; gap:6px;
+  padding-top:10px;
+  border-top:1px dashed var(--border-soft);
+}
+.bill-status .dot {
+  width:8px; height:8px; border-radius:50%;
+  background:var(--text-muted);
+  flex-shrink:0;
+}
+.bill-status.passed .dot { background:var(--green); }
+.bill-status.filed .dot { background:var(--amber); }
+.bill-status.signed .dot { background:var(--green); }
+.bill-status.vetoed .dot { background:var(--red); }
+.bill-status.archived .dot { background:var(--text-muted); }
+
+.bill-tags { display:flex; flex-wrap:wrap; gap:6px; }
+.tag {
+  font-size:0.7rem; padding:3px 9px; border-radius:999px;
+  background:var(--cream-warm); color:var(--text-dim);
+  font-weight:500;
+  border:1px solid var(--border-soft);
+}
+
+/* Focus-area-tinted tag styling */
+.tag.focus-early-childhood { background:rgba(45,106,79,0.08); color:var(--green); border-color:rgba(45,106,79,0.2); }
+.tag.focus-child-hunger { background:rgba(176,112,36,0.1); color:var(--amber); border-color:rgba(176,112,36,0.25); }
+.tag.focus-parental-support { background:rgba(25,103,210,0.08); color:var(--sky); border-color:rgba(25,103,210,0.2); }
+
+/* ── EMPTY / LOADING ───────────────────────────── */
+.empty-state, .loading {
+  max-width:480px; margin:80px auto;
+  text-align:center; color:var(--text-dim);
+  padding:0 28px;
+}
+.empty-state h3 {
+  font-family:'Lora', serif; font-weight:600;
+  font-size:1.4rem; color:var(--navy);
+  margin-bottom:10px;
+}
+.empty-state p { margin-bottom:18px; }
+.spinner {
+  width:36px; height:36px; margin:0 auto 16px;
+  border:3px solid var(--border-soft);
+  border-top-color:var(--navy);
+  border-radius:50%;
+  animation:spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* ── LOAD MORE ─────────────────────────────────── */
+.load-more-wrap {
+  text-align:center; padding:24px 28px 60px;
+  max-width:1200px; margin:0 auto;
+}
+.btn {
+  display:inline-flex; align-items:center; gap:8px;
+  padding:10px 20px; border-radius:8px;
+  font-family:inherit; font-size:0.88rem; font-weight:600;
+  cursor:pointer; transition:all 0.2s;
+  text-decoration:none;
+  border:1px solid transparent;
+}
+.btn-primary { background:var(--red); color:white; }
+.btn-primary:hover { background:var(--red-deep); color:white; }
+.btn-ghost {
+  background:transparent; color:var(--navy);
+  border-color:var(--border);
+}
+.btn-ghost:hover { border-color:var(--navy); background:var(--cream-warm); }
+
+/* ── BILL DETAIL ───────────────────────────────── */
+.detail-overlay {
+  display:none;
+  position:fixed; inset:0; z-index:100;
+  background:rgba(13,41,66,0.6);
+  backdrop-filter:blur(4px);
+  overflow-y:auto;
+  padding:32px 16px;
+}
+.detail-overlay.open { display:block; animation:fadeIn 0.2s ease-out; }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+.detail-modal {
+  max-width:860px; margin:0 auto;
+  background:var(--cream);
+  border-radius:16px;
+  box-shadow:0 30px 80px rgba(0,0,0,0.25);
+  overflow:hidden;
+  animation:slideUp 0.25s ease-out;
+}
+@keyframes slideUp {
+  from { transform:translateY(20px); opacity:0; }
+  to { transform:translateY(0); opacity:1; }
+}
+
+.detail-header {
+  background:var(--paper);
+  padding:32px 36px 28px;
+  border-bottom:1px solid var(--border-soft);
+  position:relative;
+}
+.detail-close {
+  position:absolute; top:18px; right:18px;
+  background:var(--cream-warm); border:1px solid var(--border-soft);
+  width:32px; height:32px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer;
+  color:var(--text-dim); font-size:1.2rem;
+  transition:all 0.15s;
+}
+.detail-close:hover { background:var(--red); color:white; border-color:var(--red); }
+
+.detail-back {
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:0.85rem; color:var(--text-dim);
+  background:none; border:none; padding:0;
+  cursor:pointer; margin-bottom:14px;
+}
+.detail-back:hover { color:var(--navy); }
+
+.detail-meta-row {
+  display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+  margin-bottom:18px;
+}
+.detail-bill-num {
+  font-family:'Inter', monospace;
+  font-size:1.1rem; font-weight:700;
+  letter-spacing:0.5px;
+  padding:4px 14px; border-radius:6px;
+}
+.detail-bill-num.tn { background:rgba(197,48,48,0.08); color:var(--red); border:1px solid rgba(197,48,48,0.2); }
+.detail-bill-num.federal { background:var(--sky-soft); color:var(--sky); border:1px solid rgba(25,103,210,0.2); }
+
+.detail-title {
+  font-family:'Lora', serif; font-weight:700;
+  font-size:clamp(1.4rem, 2.6vw, 1.8rem);
+  color:var(--navy);
+  letter-spacing:-0.012em;
+  line-height:1.25;
+}
+
+.detail-body {
+  padding:28px 36px 32px;
+}
+.detail-section {
+  margin-bottom:24px;
+  padding-bottom:24px;
+  border-bottom:1px solid var(--border-soft);
+}
+.detail-section:last-child { border-bottom:none; padding-bottom:0; }
+.detail-section h4 {
+  font-family:'Inter', sans-serif; font-weight:600;
+  font-size:0.72rem; letter-spacing:1.4px;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  margin-bottom:10px;
+}
+.detail-status {
+  font-size:1rem; color:var(--text);
+  display:flex; align-items:center; gap:10px;
+}
+.detail-status .dot { width:10px; height:10px; }
+
+.detail-actions {
+  display:flex; gap:12px; flex-wrap:wrap;
+  padding-top:8px;
+}
+.detail-actions .btn { padding:12px 22px; font-size:0.9rem; }
+.btn-disabled {
+  opacity:0.55; cursor:not-allowed;
+  position:relative;
+}
+.btn-disabled::after {
+  content:'Soon'; position:absolute;
+  top:-8px; right:-10px;
+  font-size:0.55rem; letter-spacing:0.5px;
+  background:var(--amber); color:white;
+  padding:2px 6px; border-radius:3px; font-weight:700;
+}
+
+@media (max-width:600px) {
+  .detail-overlay { padding:0; }
+  .detail-modal { border-radius:0; min-height:100vh; }
+  .detail-header { padding:64px 20px 20px; }
+  .detail-body { padding:20px 20px 32px; }
+}
+
+/* ── FOOTER ───────────────────────────────────── */
+footer {
+  background:var(--cream);
+  border-top:1px solid var(--border-soft);
+  padding:36px 28px 24px;
+  margin-top:24px;
+}
+.footer-inner {
+  max-width:1200px; margin:0 auto;
+  display:flex; justify-content:space-between; align-items:center;
+  flex-wrap:wrap; gap:16px;
+  font-size:0.82rem; color:var(--text-muted);
+}
+.footer-inner a { color:var(--text-dim); }
+.footer-inner a:hover { color:var(--navy); }
+.footer-links { display:flex; gap:18px; flex-wrap:wrap; }
+</style>
+</head>
+<body>
+
+<div class="status-banner">
+  <span class="pulse"></span> <strong>Bill Tracker — Preview</strong> · Searching, filtering, and detail views work · Watchlist + email templates coming soon
+</div>
+
+<!-- ── NAV ──────────────────────────────────────── -->
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a href="/" class="brand">
+      <img src="/assets/logo.png" alt="ECPolicyWatch logo">
+      <span>ecpolicywatch<span class="dot">.</span>org</span>
+    </a>
+    <div class="nav-links">
+      <a href="/#policy-focus">Policy Focus</a>
+      <a href="/bills.html" class="active">Bills</a>
+      <a href="/#news">News</a>
+      <a href="/#legislators">Legislators</a>
+      <a href="/#take-action">Take Action</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── PAGE HEADER ──────────────────────────────── -->
+<header class="page-header">
+  <div class="page-header-inner">
+    <div class="page-eyebrow">Bill Tracker</div>
+    <h1>Every bill that matters. One searchable list.</h1>
+    <p class="lede">Active legislation in the 114th Tennessee General Assembly and 119th Congress that touches early childhood, child hunger, or parental support. Filter, search, and click any bill for the full picture.</p>
+  </div>
+</header>
+
+<!-- ── FILTERS ──────────────────────────────────── -->
+<div class="filter-bar">
+  <div class="filter-bar-inner">
+
+    <div class="filter-group" data-group="focus">
+      <span class="filter-label">Focus</span>
+      <button class="chip active" data-focus="all">All</button>
+      <button class="chip" data-focus="early-childhood">Early Childhood</button>
+      <button class="chip" data-focus="child-hunger">Child Hunger</button>
+      <button class="chip" data-focus="parental-support">Parental Support</button>
+    </div>
+
+    <div class="filter-group" data-group="origin">
+      <span class="filter-label">Origin</span>
+      <button class="chip active" data-origin="all">Both</button>
+      <button class="chip" data-origin="TN">Tennessee</button>
+      <button class="chip" data-origin="Federal">Federal</button>
+    </div>
+
+    <label class="search-input">
+      <span>🔍</span>
+      <input id="search" type="search" placeholder="Search bill number, title, or topic…" aria-label="Search bills">
+    </label>
+
+    <label class="toggle">
+      <input type="checkbox" id="show-archived">
+      <span class="toggle-track"></span>
+      <span>Include archived sessions</span>
+    </label>
+
+  </div>
+</div>
+
+<!-- ── RESULTS BAR ──────────────────────────────── -->
+<div class="results-bar">
+  <div>
+    <strong id="result-count">—</strong> bills matching <span id="result-context"></span>
+    <button class="clear-filters" id="clear-filters" style="display:none">Clear filters</button>
+  </div>
+  <div>
+    <label style="margin-right:8px; font-size:0.78rem; letter-spacing:1px; text-transform:uppercase; color:var(--text-muted);">Sort</label>
+    <select class="sort-select" id="sort">
+      <option value="number">Bill number</option>
+      <option value="title">Title (A→Z)</option>
+      <option value="status">Status</option>
+    </select>
+  </div>
+</div>
+
+<!-- ── BILL LIST ────────────────────────────────── -->
+<main id="bill-list" class="bill-list">
+  <div class="loading" style="grid-column:1/-1">
+    <div class="spinner"></div>
+    Loading bills…
+  </div>
+</main>
+
+<div class="load-more-wrap">
+  <button class="btn btn-ghost" id="load-more" style="display:none">Show more bills</button>
+</div>
+
+<!-- ── BILL DETAIL OVERLAY ──────────────────────── -->
+<div class="detail-overlay" id="detail-overlay" role="dialog" aria-labelledby="detail-title" aria-modal="true">
+  <div class="detail-modal">
+    <div class="detail-header">
+      <button class="detail-close" id="detail-close" aria-label="Close">×</button>
+      <button class="detail-back" id="detail-back" aria-label="Back to list">← Back to all bills</button>
+      <div class="detail-meta-row" id="detail-meta-row"></div>
+      <h2 class="detail-title" id="detail-title"></h2>
+    </div>
+    <div class="detail-body" id="detail-body"></div>
+  </div>
+</div>
+
+<!-- ── FOOTER ───────────────────────────────────── -->
+<footer>
+  <div class="footer-inner">
+    <span>© 2026 ECPolicyWatch · An Echo &amp; Orbit civic project</span>
+    <div class="footer-links">
+      <a href="/">Home</a>
+      <a href="/#policy-focus">Policy Focus</a>
+      <a href="/#take-action">Get notified</a>
+      <a href="https://github.com/jessicabsimp/ECPolicyWatch" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ─────────────────────────────────────────────────
+// Bill tracker — runtime
+// ─────────────────────────────────────────────────
+
+// Compressed bills.json schema:
+//   {s:[sessions], st:[statuses], b:[ [origin, sIdx, billNumber, title, [tags], stIdx, url], ... ]}
+
+// Focus-area tag mapping
+const FOCUS_AREAS = {
+  'early-childhood': {
+    label: 'Early Childhood',
+    tags: ['Child Care','Childcare','ECE-Related','Early Childhood','Early Intervention','Early Learning','Head Start','Home Visiting','Kindergarten','Licensing','Literacy','Pre-K','Subsidy','Workforce']
+  },
+  'child-hunger': {
+    label: 'Child Hunger',
+    tags: ['Food Assistance','School Nutrition','Summer EBT','USDA']
+  },
+  'parental-support': {
+    label: 'Parental Support',
+    tags: ['Adoption','Child Development','Child Tax Credit','Child Welfare','Dependent Care','Family Leave','Foster Care','Maternal Health','Paid Leave','Safety','Tax Credit','Trauma-Informed Care']
+  }
+};
+
+// Current sessions (rest are "archived")
+const CURRENT_SESSIONS = new Set([
+  '114th General Assembly',
+  '2025-2026 Regular Session (114th General Assembly)',
+  '119th Congress',
+  '2025-2026 Regular Session (119th Congress)'
+]);
+
+const PAGE_SIZE = 60;
+
+// State
+let RAW = null;
+let normalized = [];
+let state = {
+  focus: 'all',
+  origin: 'all',
+  search: '',
+  showArchived: false,
+  sort: 'number',
+  page: 1,
+  selectedBillId: null
+};
+
+// ─────────────────────────────────────────────────
+// Utilities
+// ─────────────────────────────────────────────────
+
+function tagToFocus(tag) {
+  for (const [k, v] of Object.entries(FOCUS_AREAS)) {
+    if (v.tags.includes(tag)) return k;
+  }
+  return null;
+}
+
+function billFocusAreas(tags) {
+  const set = new Set();
+  for (const t of tags) {
+    const f = tagToFocus(t);
+    if (f) set.add(f);
+  }
+  return [...set];
+}
+
+function billId(b) {
+  // origin-billnumber, fallback to index-based hash if no number
+  if (b.bill_number) return `${b.origin}-${b.bill_number}`;
+  return null; // skip bills without numbers
+}
+
+function statusClass(status) {
+  const lower = status.toLowerCase();
+  if (lower.includes('signed by governor')) return 'signed';
+  if (lower.includes('passed both chambers')) return 'passed';
+  if (lower.includes('passed first chamber')) return 'passed';
+  if (lower.includes('vetoed')) return 'vetoed';
+  if (lower.includes('filed') || lower.includes('introduced')) return 'filed';
+  return 'archived';
+}
+
+function escapeHtml(str) {
+  const map = {'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'};
+  return String(str).replace(/[&<>"']/g, c => map[c]);
+}
+
+function highlightSearch(text, term) {
+  if (!term) return escapeHtml(text);
+  const safe = escapeHtml(text);
+  const safeTerm = escapeHtml(term);
+  const re = new RegExp('(' + safeTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+  return safe.replace(re, '<mark style="background:rgba(176,112,36,0.18); padding:0 2px; border-radius:2px;">$1</mark>');
+}
+
+// ─────────────────────────────────────────────────
+// Data loading & normalization
+// ─────────────────────────────────────────────────
+
+async function loadBills() {
+  try {
+    // Try local first, fall back to GitHub raw URL for off-domain previews
+    const sources = [
+      '/bills.json',
+      'https://raw.githubusercontent.com/jessicabsimp/ECPolicyWatch/main/bills.json'
+    ];
+    let lastErr;
+    for (const src of sources) {
+      try {
+        const resp = await fetch(src);
+        if (!resp.ok) { lastErr = new Error('HTTP ' + resp.status + ' from ' + src); continue; }
+        RAW = await resp.json();
+        break;
+      } catch (err) {
+        lastErr = err;
+      }
+    }
+    if (!RAW) throw lastErr || new Error('Could not load bills.json');
+
+    normalized = [];
+    for (let i = 0; i < RAW.b.length; i++) {
+      const row = RAW.b[i];
+      const origin = row[0]; // "TN" or "Federal"
+      const session = RAW.s[row[1]];
+      const billNumber = row[2];
+      const title = row[3];
+      const tags = row[4] || [];
+      const status = RAW.st[row[5]] || '';
+      const url = row[6];
+
+      if (!billNumber) continue; // skip bills without numbers (resolutions, etc.)
+
+      const cleanStatus = status.replace(/\s*\(not in current session\)\s*$/i, '').trim() || 'Status not available';
+      const isCurrentSession = CURRENT_SESSIONS.has(session);
+      const focusAreas = billFocusAreas(tags);
+
+      normalized.push({
+        idx: i,
+        origin,
+        session,
+        bill_number: billNumber,
+        title,
+        tags,
+        focusAreas,
+        status: cleanStatus,
+        rawStatus: status,
+        url,
+        isCurrentSession,
+        id: `${origin}-${billNumber}`
+      });
+    }
+
+    return normalized;
+  } catch (err) {
+    console.error('Failed to load bills:', err);
+    document.getElementById('bill-list').innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1">
+        <h3>Couldn't load bills</h3>
+        <p>${escapeHtml(err.message)}</p>
+        <p style="font-size:0.85rem;">Make sure <code>/bills.json</code> is reachable. If you just deployed, give it a minute.</p>
+      </div>`;
+    return null;
+  }
+}
+
+// ─────────────────────────────────────────────────
+// Filtering & rendering
+// ─────────────────────────────────────────────────
+
+function applyFilters() {
+  const term = state.search.trim().toLowerCase();
+
+  let result = normalized;
+
+  if (!state.showArchived) {
+    result = result.filter(b => b.isCurrentSession);
+  }
+
+  if (state.focus !== 'all') {
+    result = result.filter(b => b.focusAreas.includes(state.focus));
+  }
+
+  if (state.origin !== 'all') {
+    result = result.filter(b => b.origin === state.origin);
+  }
+
+  if (term) {
+    result = result.filter(b =>
+      b.bill_number.toLowerCase().includes(term) ||
+      b.title.toLowerCase().includes(term) ||
+      b.tags.some(t => t.toLowerCase().includes(term))
+    );
+  }
+
+  // Sort
+  if (state.sort === 'number') {
+    result = result.slice().sort((a, b) => {
+      // TN first, then Federal; within each, numeric sort by digits in bill_number
+      if (a.origin !== b.origin) return a.origin === 'TN' ? -1 : 1;
+      const an = parseInt(a.bill_number.replace(/\D/g, ''), 10) || 0;
+      const bn = parseInt(b.bill_number.replace(/\D/g, ''), 10) || 0;
+      return an - bn;
+    });
+  } else if (state.sort === 'title') {
+    result = result.slice().sort((a, b) => a.title.localeCompare(b.title));
+  } else if (state.sort === 'status') {
+    const order = ['Signed by Governor.','Passed Both Chambers','Passed First Chamber','Filed','Status not available'];
+    result = result.slice().sort((a, b) => {
+      const ai = order.findIndex(o => a.status.startsWith(o));
+      const bi = order.findIndex(o => b.status.startsWith(o));
+      return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+    });
+  }
+
+  return result;
+}
+
+function renderList() {
+  const filtered = applyFilters();
+  const list = document.getElementById('bill-list');
+  const countEl = document.getElementById('result-count');
+  const contextEl = document.getElementById('result-context');
+  const clearBtn = document.getElementById('clear-filters');
+  const loadMoreBtn = document.getElementById('load-more');
+
+  countEl.textContent = filtered.length.toLocaleString();
+  contextEl.textContent = describeFilters();
+
+  const hasFilters = state.focus !== 'all' || state.origin !== 'all' || state.search.trim();
+  clearBtn.style.display = hasFilters ? 'inline' : 'none';
+
+  if (filtered.length === 0) {
+    list.innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1">
+        <h3>No bills match.</h3>
+        <p>Try a broader search or clear filters.</p>
+        <button class="btn btn-ghost" onclick="clearFilters()">Clear filters</button>
+      </div>`;
+    loadMoreBtn.style.display = 'none';
+    return;
+  }
+
+  const visible = filtered.slice(0, state.page * PAGE_SIZE);
+
+  list.innerHTML = visible.map(b => billCardHtml(b, state.search.trim())).join('');
+
+  // Wire up clicks
+  list.querySelectorAll('.bill-card').forEach(card => {
+    card.addEventListener('click', () => openDetail(card.dataset.billId));
+  });
+
+  loadMoreBtn.style.display = filtered.length > visible.length ? 'inline-flex' : 'none';
+  loadMoreBtn.textContent = `Show more bills (${filtered.length - visible.length} remaining)`;
+}
+
+function billCardHtml(b, term) {
+  const originClass = b.origin === 'TN' ? 'tn' : 'federal';
+  const sClass = statusClass(b.status);
+  const tags = b.tags.slice(0, 4).map(t => {
+    const focus = tagToFocus(t);
+    const cls = focus ? `focus-${focus}` : '';
+    return `<span class="tag ${cls}">${escapeHtml(t)}</span>`;
+  }).join('');
+
+  return `
+    <button class="bill-card" data-bill-id="${escapeHtml(b.id)}" type="button">
+      <div class="bill-card-head">
+        <span class="bill-num ${originClass}">${escapeHtml(b.bill_number)}</span>
+        <span class="bill-origin">${b.origin === 'TN' ? 'Tennessee' : 'Federal'}</span>
+      </div>
+      <div class="bill-title">${highlightSearch(b.title, term)}</div>
+      <div class="bill-tags">${tags}</div>
+      <div class="bill-status ${sClass}">
+        <span class="dot"></span>
+        <span>${escapeHtml(b.status)}</span>
+      </div>
+    </button>`;
+}
+
+function describeFilters() {
+  const parts = [];
+  if (state.focus !== 'all') parts.push(`<strong>${FOCUS_AREAS[state.focus].label}</strong>`);
+  if (state.origin !== 'all') parts.push(`<strong>${state.origin === 'TN' ? 'Tennessee' : 'Federal'}</strong>`);
+  if (state.search.trim()) parts.push(`matching <strong>"${escapeHtml(state.search.trim())}"</strong>`);
+  if (!state.showArchived) parts.push('current sessions');
+  else parts.push('all sessions');
+  return parts.join(' · ');
+}
+
+// ─────────────────────────────────────────────────
+// Detail view
+// ─────────────────────────────────────────────────
+
+function openDetail(billId) {
+  const bill = normalized.find(b => b.id === billId);
+  if (!bill) return;
+
+  state.selectedBillId = billId;
+
+  const overlay = document.getElementById('detail-overlay');
+  const metaRow = document.getElementById('detail-meta-row');
+  const titleEl = document.getElementById('detail-title');
+  const body = document.getElementById('detail-body');
+
+  const originClass = bill.origin === 'TN' ? 'tn' : 'federal';
+
+  metaRow.innerHTML = `
+    <span class="detail-bill-num ${originClass}">${escapeHtml(bill.bill_number)}</span>
+    <span style="font-size:0.85rem; color:var(--text-dim);">${bill.origin === 'TN' ? 'Tennessee Legislature' : 'U.S. Congress'} · ${escapeHtml(bill.session)}</span>
+  `;
+  titleEl.textContent = bill.title;
+
+  const tagsHtml = bill.tags.map(t => {
+    const focus = tagToFocus(t);
+    const cls = focus ? `focus-${focus}` : '';
+    return `<span class="tag ${cls}">${escapeHtml(t)}</span>`;
+  }).join('');
+
+  const sClass = statusClass(bill.status);
+
+  body.innerHTML = `
+    <div class="detail-section">
+      <h4>Status</h4>
+      <div class="detail-status ${sClass}"><span class="dot"></span><span>${escapeHtml(bill.status)}</span></div>
+      ${!bill.isCurrentSession ? `<div style="margin-top:10px; font-size:0.82rem; color:var(--amber); background:var(--amber-soft); padding:8px 12px; border-radius:6px; display:inline-block;">📁 This bill is from an archived session</div>` : ''}
+    </div>
+
+    <div class="detail-section">
+      <h4>Topics</h4>
+      <div class="bill-tags">${tagsHtml}</div>
+    </div>
+
+    <div class="detail-section">
+      <h4>Where this fits</h4>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        ${bill.focusAreas.length ? bill.focusAreas.map(f =>
+          `<a href="#focus=${f}" class="chip" style="background:var(--cream-warm);">${FOCUS_AREAS[f].label}</a>`
+        ).join('') : '<span style="font-size:0.85rem; color:var(--text-muted);">No primary focus area</span>'}
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <h4>Take action</h4>
+      <div class="detail-actions">
+        <a class="btn btn-primary" href="${escapeHtml(bill.url)}" target="_blank" rel="noopener noreferrer">Read full text on LegiScan ↗</a>
+        <a class="btn btn-ghost btn-disabled" href="/#take-action">✉ Email legislators</a>
+        <a class="btn btn-ghost btn-disabled" href="/#take-action">★ Save to watchlist</a>
+      </div>
+      <p style="margin-top:14px; font-size:0.82rem; color:var(--text-muted);">
+        Email templates and your personal watchlist launch with the next release. <a href="/#take-action">Sign up to be notified.</a>
+      </p>
+    </div>
+  `;
+
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  updateHash();
+}
+
+function closeDetail() {
+  document.getElementById('detail-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  state.selectedBillId = null;
+  updateHash();
+}
+
+// ─────────────────────────────────────────────────
+// Hash routing
+// ─────────────────────────────────────────────────
+
+function readHash() {
+  const hash = window.location.hash.replace(/^#/, '');
+  if (!hash) return {};
+  const params = {};
+  hash.split('&').forEach(pair => {
+    const [k, v] = pair.split('=');
+    if (k) params[decodeURIComponent(k)] = decodeURIComponent(v || '');
+  });
+  return params;
+}
+
+function updateHash() {
+  const parts = [];
+  if (state.focus !== 'all') parts.push(`focus=${state.focus}`);
+  if (state.origin !== 'all') parts.push(`origin=${state.origin}`);
+  if (state.search.trim()) parts.push(`q=${encodeURIComponent(state.search.trim())}`);
+  if (state.showArchived) parts.push(`archived=1`);
+  if (state.selectedBillId) parts.push(`bill=${encodeURIComponent(state.selectedBillId)}`);
+
+  const newHash = parts.length ? '#' + parts.join('&') : '';
+  if (newHash !== window.location.hash) {
+    history.replaceState(null, '', window.location.pathname + newHash);
+  }
+}
+
+function applyHash() {
+  const params = readHash();
+  if (params.focus && FOCUS_AREAS[params.focus]) state.focus = params.focus;
+  if (params.origin && ['TN','Federal'].includes(params.origin)) state.origin = params.origin;
+  if (params.q) {
+    state.search = params.q;
+    document.getElementById('search').value = params.q;
+  }
+  if (params.archived === '1') {
+    state.showArchived = true;
+    document.getElementById('show-archived').checked = true;
+  }
+  if (params.bill) {
+    state.selectedBillId = params.bill;
+  }
+
+  // Sync chip UI
+  document.querySelectorAll('[data-group="focus"] .chip').forEach(c => {
+    c.classList.toggle('active', c.dataset.focus === state.focus);
+  });
+  document.querySelectorAll('[data-group="origin"] .chip').forEach(c => {
+    c.classList.toggle('active', c.dataset.origin === state.origin);
+  });
+}
+
+// ─────────────────────────────────────────────────
+// Event wiring
+// ─────────────────────────────────────────────────
+
+function clearFilters() {
+  state.focus = 'all';
+  state.origin = 'all';
+  state.search = '';
+  state.page = 1;
+  document.getElementById('search').value = '';
+  document.querySelectorAll('[data-group="focus"] .chip').forEach(c => c.classList.toggle('active', c.dataset.focus === 'all'));
+  document.querySelectorAll('[data-group="origin"] .chip').forEach(c => c.classList.toggle('active', c.dataset.origin === 'all'));
+  updateHash();
+  renderList();
+}
+window.clearFilters = clearFilters;
+
+function bindEvents() {
+  // Focus chips
+  document.querySelectorAll('[data-group="focus"] .chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      state.focus = chip.dataset.focus;
+      state.page = 1;
+      document.querySelectorAll('[data-group="focus"] .chip').forEach(c => c.classList.toggle('active', c === chip));
+      updateHash();
+      renderList();
+    });
+  });
+
+  // Origin chips
+  document.querySelectorAll('[data-group="origin"] .chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      state.origin = chip.dataset.origin;
+      state.page = 1;
+      document.querySelectorAll('[data-group="origin"] .chip').forEach(c => c.classList.toggle('active', c === chip));
+      updateHash();
+      renderList();
+    });
+  });
+
+  // Search (debounced)
+  let debounce;
+  document.getElementById('search').addEventListener('input', e => {
+    clearTimeout(debounce);
+    debounce = setTimeout(() => {
+      state.search = e.target.value;
+      state.page = 1;
+      updateHash();
+      renderList();
+    }, 150);
+  });
+
+  // Archived toggle
+  document.getElementById('show-archived').addEventListener('change', e => {
+    state.showArchived = e.target.checked;
+    state.page = 1;
+    updateHash();
+    renderList();
+  });
+
+  // Sort
+  document.getElementById('sort').addEventListener('change', e => {
+    state.sort = e.target.value;
+    renderList();
+  });
+
+  // Load more
+  document.getElementById('load-more').addEventListener('click', () => {
+    state.page += 1;
+    renderList();
+  });
+
+  // Clear filters
+  document.getElementById('clear-filters').addEventListener('click', clearFilters);
+
+  // Detail close
+  document.getElementById('detail-close').addEventListener('click', closeDetail);
+  document.getElementById('detail-back').addEventListener('click', closeDetail);
+  document.getElementById('detail-overlay').addEventListener('click', e => {
+    if (e.target.id === 'detail-overlay') closeDetail();
+  });
+
+  // Esc key closes detail
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && state.selectedBillId) closeDetail();
+  });
+
+  // Hash changes (back/forward buttons)
+  window.addEventListener('hashchange', () => {
+    const params = readHash();
+    if (params.bill && params.bill !== state.selectedBillId) {
+      openDetail(params.bill);
+    } else if (!params.bill && state.selectedBillId) {
+      closeDetail();
+    }
+  });
+}
+
+// ─────────────────────────────────────────────────
+// Boot
+// ─────────────────────────────────────────────────
+
+(async function init() {
+  bindEvents();
+  await loadBills();
+  applyHash();
+  renderList();
+
+  // Open detail if hash has bill
+  const params = readHash();
+  if (params.bill) openDetail(params.bill);
+})();
+</script>
+
+</body>
+</html>
