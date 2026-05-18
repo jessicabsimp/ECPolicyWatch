@@ -548,7 +548,7 @@ footer {
     </div>
 
     <label class="search-input">
-      <span>🔍</span>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
       <input id="search" type="search" placeholder="Search bill number, title, or topic…" aria-label="Search bills">
     </label>
 
@@ -1069,7 +1069,7 @@ async function openDetail(billId) {
       <h4>Status</h4>
       <div class="detail-status ${sClass}"><span class="dot"></span><span>${escapeHtml(bill.status)}</span></div>
       ${bill.lastUpdated ? `<div style="margin-top:8px; font-size:0.85rem; color:var(--text-dim);">Last action: <strong style="color:var(--navy);">${formatDate(bill.lastUpdated)}</strong></div>` : ''}
-      ${!bill.isCurrentSession ? `<div style="margin-top:10px; font-size:0.82rem; color:var(--amber); background:var(--amber-soft); padding:8px 12px; border-radius:6px; display:inline-block;">📁 This bill is from an archived session</div>` : ''}
+      ${!bill.isCurrentSession ? `<div style="margin-top:10px; font-size:0.82rem; color:var(--amber); background:var(--amber-soft); padding:8px 12px; border-radius:6px; display:inline-flex; align-items:center; gap:6px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>This bill is from an archived session</div>` : ''}
     </div>
 
     <div class="detail-section">
@@ -1095,8 +1095,8 @@ async function openDetail(billId) {
       <h4>Take action</h4>
       <div class="detail-actions">
         <a class="btn btn-primary" href="${escapeHtml(bill.url)}" target="_blank" rel="noopener noreferrer">Read full text on LegiScan ↗</a>
-        <a class="btn btn-ghost btn-disabled" href="/#take-action">✉ Email legislators</a>
-        <a class="btn btn-ghost btn-disabled" href="/#take-action">★ Save to watchlist</a>
+        <a class="btn btn-ghost btn-disabled" href="/#take-action"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline-block;vertical-align:middle;margin-right:5px;"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>Email legislators</a>
+        <a class="btn btn-ghost btn-disabled" href="/#take-action"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline-block;vertical-align:middle;margin-right:5px;"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>Save to watchlist</a>
       </div>
       <p style="margin-top:14px; font-size:0.82rem; color:var(--text-muted);">
         Email templates and your personal watchlist launch with the next release. <a href="/#take-action">Sign up to be notified.</a>
