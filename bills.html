@@ -670,6 +670,9 @@ let state = {
   selectedBillId: null
 };
 
+// bills-detail.json cache — loaded lazily on first modal open
+let DETAIL_CACHE = null;
+
 // ─────────────────────────────────────────────────
 // Utilities
 // ─────────────────────────────────────────────────
@@ -768,6 +771,26 @@ function highlightSearch(text, term) {
   const safeTerm = escapeHtml(term);
   const re = new RegExp('(' + safeTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
   return safe.replace(re, '<mark style="background:rgba(176,112,36,0.18); padding:0 2px; border-radius:2px;">$1</mark>');
+}
+
+// Lazy-loads bills-detail.json (sponsors, summaries, actions).
+// Result is cached after the first successful fetch; {} on failure.
+async function fetchDetailData() {
+  if (DETAIL_CACHE !== null) return DETAIL_CACHE;
+  const sources = [
+    '/bills-detail.json',
+    'https://raw.githubusercontent.com/jessicabsimp/ECPolicyWatch/main/bills-detail.json'
+  ];
+  for (const src of sources) {
+    try {
+      const resp = await fetch(src);
+      if (!resp.ok) continue;
+      DETAIL_CACHE = await resp.json();
+      return DETAIL_CACHE;
+    } catch(e) { /* try next source */ }
+  }
+  DETAIL_CACHE = {}; // empty sentinel so we don't retry on every click
+  return DETAIL_CACHE;
 }
 
 // ─────────────────────────────────────────────────
@@ -1004,7 +1027,7 @@ function describeFilters() {
 // Detail view
 // ─────────────────────────────────────────────────
 
-function openDetail(billId) {
+async function openDetail(billId) {
   const bill = normalized.find(b => b.id === billId);
   if (!bill) return;
 
@@ -1021,7 +1044,9 @@ function openDetail(billId) {
     <span class="detail-bill-num ${originClass}">${escapeHtml(bill.bill_number)}</span>
     <span style="font-size:0.85rem; color:var(--text-dim);">${bill.origin === 'TN' ? 'Tennessee Legislature' : 'U.S. Congress'} · ${escapeHtml(bill.session)}</span>
   `;
-  titleEl.textContent = bill.title;
+
+  // Heading: "HB0006 · Short readable title" — no legalese
+  titleEl.textContent = `${bill.bill_number} · ${bill.shortTitle}`;
 
   const tagsHtml = bill.tags.map(t => {
     const focus = tagToFocus(t);
@@ -1032,6 +1057,14 @@ function openDetail(billId) {
   const sClass = statusClass(bill.status);
 
   body.innerHTML = `
+    <div class="detail-section" id="detail-summary-section">
+      <h4>Summary</h4>
+      <div id="detail-summary-content" style="display:flex;align-items:center;gap:10px;color:var(--text-muted);font-size:0.88rem;">
+        <div class="spinner" style="width:16px;height:16px;border-width:2px;margin:0;flex-shrink:0;"></div>
+        <span>Loading summary…</span>
+      </div>
+    </div>
+
     <div class="detail-section">
       <h4>Status</h4>
       <div class="detail-status ${sClass}"><span class="dot"></span><span>${escapeHtml(bill.status)}</span></div>
@@ -1053,6 +1086,11 @@ function openDetail(billId) {
       </div>
     </div>
 
+    <div class="detail-section" id="detail-sponsors-section" style="display:none">
+      <h4>Sponsors</h4>
+      <div id="detail-sponsors-content"></div>
+    </div>
+
     <div class="detail-section">
       <h4>Take action</h4>
       <div class="detail-actions">
@@ -1069,6 +1107,65 @@ function openDetail(billId) {
   overlay.classList.add('open');
   document.body.style.overflow = 'hidden';
   updateHash();
+
+  // ── Async: fill in summary + sponsors from bills-detail.json ──
+  try {
+    const detailData = await fetchDetailData();
+    // Guard: user may have closed or navigated to a different bill while we fetched
+    if (state.selectedBillId !== billId) return;
+
+    const detail = detailData && detailData[bill.id];
+    const summaryEl = document.getElementById('detail-summary-content');
+
+    if (summaryEl) {
+      const text = detail && detail.summary && detail.summary.trim().length > 20
+        ? detail.summary.trim()
+        : null;
+      summaryEl.innerHTML = text
+        ? `<p style="font-size:0.95rem;line-height:1.7;color:var(--text);">${escapeHtml(text)}</p>`
+        : `<p style="font-size:0.9rem;color:var(--text-dim);font-style:italic;">
+             No summary available yet.
+             <a href="${escapeHtml(bill.url)}" target="_blank" rel="noopener noreferrer"
+                style="color:var(--navy);font-style:normal;">View full bill text on LegiScan ↗</a>
+           </p>`;
+    }
+
+    if (detail && detail.sponsors && detail.sponsors.length > 0) {
+      const sponsorsSection = document.getElementById('detail-sponsors-section');
+      const sponsorsContent = document.getElementById('detail-sponsors-content');
+      if (sponsorsSection && sponsorsContent && state.selectedBillId === billId) {
+        const primaries = detail.sponsors.slice(0, 6);
+        const coCount = (detail.co_sponsors || []).length;
+        let html = `<div style="display:flex;flex-wrap:wrap;gap:8px;">`;
+        primaries.forEach(s => {
+          const name = typeof s === 'string' ? s : (s.name || '');
+          const party = typeof s === 'object' ? (s.party || '') : '';
+          html += `<span style="font-size:0.85rem;padding:4px 12px;background:var(--cream-warm);border:1px solid var(--border-soft);border-radius:6px;color:var(--text);">
+            ${escapeHtml(name)}${party ? ` <span style="color:var(--text-muted);">(${escapeHtml(party)})</span>` : ''}
+          </span>`;
+        });
+        html += `</div>`;
+        if (coCount > 0) {
+          html += `<div style="margin-top:8px;font-size:0.82rem;color:var(--text-muted);">
+            +${coCount} cosponsor${coCount !== 1 ? 's' : ''}
+          </div>`;
+        }
+        sponsorsContent.innerHTML = html;
+        sponsorsSection.style.display = 'block';
+      }
+    }
+  } catch(e) {
+    // Network failure — show the fallback gracefully
+    if (state.selectedBillId !== billId) return;
+    const summaryEl = document.getElementById('detail-summary-content');
+    if (summaryEl) {
+      summaryEl.innerHTML = `<p style="font-size:0.9rem;color:var(--text-dim);font-style:italic;">
+        No summary available yet.
+        <a href="${escapeHtml(bill.url)}" target="_blank" rel="noopener noreferrer"
+           style="color:var(--navy);font-style:normal;">View full bill text on LegiScan ↗</a>
+      </p>`;
+    }
+  }
 }
 
 function closeDetail() {
