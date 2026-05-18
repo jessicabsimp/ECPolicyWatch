@@ -22,7 +22,9 @@ Get a key at: https://openstates.org/accounts/profile/ (free)
 Design notes
 ------------
 • Uses keyword searches rather than paginating all session bills.
-  This keeps request count manageable (~80–120 per full run).
+  This keeps request count manageable (worst case ~200 per full run:
+  20 keywords × 2 jurisdictions × 5 pages max; typical is lower due
+  to early stops and deduplication).
 • Rate limit: Open States free tier allows 10 req/min.
   We use REQUEST_DELAY=12s between calls to stay safely under.
 • A full run takes roughly 15–25 minutes.
@@ -57,7 +59,7 @@ OPENSTATES_BASE = "https://v3.openstates.org"
 USER_AGENT = "ECPolicyWatch/1.0 (+https://ecpolicywatch.org)"
 PER_PAGE = 20           # max per_page for Open States free tier
 REQUEST_DELAY = 12.0    # seconds between requests (10 req/min limit → 12s = safe)
-MAX_PAGES_PER_KEYWORD = 8  # cap per search term to prevent quota blowout
+MAX_PAGES_PER_KEYWORD = 5  # cap per search term — 20 keywords × 2 jurisdictions × 5 = 200 max (under 250/day free tier)
 
 # ── Sessions we actively track ────────────────────────────────────────────────
 # Open States returns these as short strings ("114", "119").
