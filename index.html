@@ -204,9 +204,7 @@ section { padding:72px 28px; }
 }
 .policy-icon {
   width:52px; height:52px; border-radius:12px;
-  background:var(--cream-warm);
   display:flex; align-items:center; justify-content:center;
-  font-size:1.6rem;
   border:1px solid var(--border-soft);
 }
 .policy-card h3 {
@@ -523,7 +521,7 @@ footer {
       <a href="#take-action">Take Action</a>
     </div>
     <div class="nav-search">
-      <span>🔍</span>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
       <input type="search" placeholder="Search bills, sponsors, topics…" aria-label="Search">
     </div>
   </div>
@@ -558,7 +556,12 @@ footer {
 
       <!-- Early Childhood -->
       <article class="policy-card">
-        <div class="policy-icon">🌱</div>
+        <div class="policy-icon" style="background:rgba(45,106,79,0.08);border-color:rgba(45,106,79,0.2);color:var(--green);">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+          </svg>
+        </div>
         <h3>Early Childhood</h3>
         <p class="desc">Childcare access, pre-K funding, Head Start, early intervention, kindergarten, and the workforce that supports our youngest learners.</p>
         <div class="policy-stat">
@@ -581,14 +584,19 @@ footer {
           </li>
         </ul>
         <div class="policy-actions">
-          <a class="btn btn-primary" href="#take-action">✉ Email legislators<span class="coming-soon">Soon</span></a>
+          <a class="btn btn-primary" href="#take-action"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline-block;vertical-align:middle;margin-right:5px;"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>Email legislators<span class="coming-soon">Soon</span></a>
           <a class="btn btn-link" href="/bills.html#focus=early-childhood">View all 339 →</a>
         </div>
       </article>
 
       <!-- Child Hunger -->
       <article class="policy-card">
-        <div class="policy-icon">🥪</div>
+        <div class="policy-icon" style="background:rgba(176,112,36,0.08);border-color:rgba(176,112,36,0.2);color:var(--amber);">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06z"/>
+            <path d="M10 2c1 .5 2 2 2 5"/>
+          </svg>
+        </div>
         <h3>Child Hunger</h3>
         <p class="desc">School meals, summer EBT, food assistance, USDA programs, and policies that ensure no child in Tennessee goes hungry.</p>
         <div class="policy-stat">
@@ -611,14 +619,21 @@ footer {
           </li>
         </ul>
         <div class="policy-actions">
-          <a class="btn btn-primary" href="#take-action">✉ Email legislators<span class="coming-soon">Soon</span></a>
+          <a class="btn btn-primary" href="#take-action"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline-block;vertical-align:middle;margin-right:5px;"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>Email legislators<span class="coming-soon">Soon</span></a>
           <a class="btn btn-link" href="/bills.html#focus=child-hunger">View all 23 →</a>
         </div>
       </article>
 
       <!-- Parental Support -->
       <article class="policy-card">
-        <div class="policy-icon">👨‍👩‍👧</div>
+        <div class="policy-icon" style="background:rgba(25,103,210,0.08);border-color:rgba(25,103,210,0.2);color:var(--sky);">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
         <h3>Parental Support</h3>
         <p class="desc">Paid family leave, child tax credit, maternal health, foster care, adoption, and the policy frameworks that hold families up.</p>
         <div class="policy-stat">
@@ -641,7 +656,7 @@ footer {
           </li>
         </ul>
         <div class="policy-actions">
-          <a class="btn btn-primary" href="#take-action">✉ Email legislators<span class="coming-soon">Soon</span></a>
+          <a class="btn btn-primary" href="#take-action"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline-block;vertical-align:middle;margin-right:5px;"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>Email legislators<span class="coming-soon">Soon</span></a>
           <a class="btn btn-link" href="/bills.html#focus=parental-support">View all 229 →</a>
         </div>
       </article>
